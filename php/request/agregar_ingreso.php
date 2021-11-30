@@ -1,0 +1,52 @@
+<?php
+require("../configuration/config.php");
+require("../connections/connection.php");
+
+$cantidad = $_POST['cantidad'];
+$tipo = $_POST['tipo'];
+$otro = $_POST['otro'];
+$fecha = date("Y-m-d");
+$hora = date("H:i:s");
+
+$obtener= "SELECT id FROM efectivo ORDER BY id DESC LIMIT 1 ";
+$resultado = mysqli_query($mysqli, $obtener) or die("<h2>Error de MySQL.</h2>". mysql_error());
+$row=mysqli_fetch_assoc($resultado);
+$consecutivo=$row["id"]+1;
+
+
+
+//$NOMBRE
+if($tipo == "Otro")
+{
+	$query = "INSERT INTO efectivo(id, efectivo, concepto, fecha, hora, eos, usuario) VALUES ('$consecutivo', '$cantidad', '$otro', '$fecha', '$hora', 'entrada', '$Nombre')";
+}
+else
+{
+	$query = "INSERT INTO efectivo(id, efectivo, concepto, fecha, hora, eos, usuario) VALUES ('$consecutivo', '$cantidad', '$tipo', '$fecha', '$hora', 'entrada', '$Nombre')";
+}
+
+$ejecutar = mysqli_query($mysqli, $query);
+if($ejecutar)
+{
+	if(isset($_POST['inicial']))
+	{
+		echo "<script>location.href='../interfaces/dashboard.php?registrado=true'</script>";
+	}
+	elseif($tipo == "Recibo de Dinero")
+	{
+		echo "<script> window.open('../interfaces/recibo.php?id=".$consecutivo."','_blank'); location.href='../interfaces/dashboard.php?registrado=true'</script>";
+
+	}
+	else
+	{
+		echo "<script>location.href='../interfaces/ingresos.php?registrado=true'</script>";
+	}
+	
+}
+else
+{
+	echo mysqli_error($mysqli);
+}
+
+
+?>
