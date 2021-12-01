@@ -16,6 +16,7 @@ if($Resul_datos)
 	$Eslogan		= $Generales['eslogan'];
 	$Direccion		= $Generales['direccion'];
 	$BD				= $Generales['BD'];
+	$Logo				= $Generales['logo'];
 }
 else
 {

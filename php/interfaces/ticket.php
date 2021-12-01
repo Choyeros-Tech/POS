@@ -17,7 +17,7 @@ $res_ticket = mysqli_query($mysqli, $datos_ticket);
     <body>
         <div class="ticket">
         	<div style="text-align: center;">
-            <img src="../../assets/images/cabecera.png" alt="Logotipo" style="height: 60px;max-height: 60px;width: 100px;max-width: 100px;">
+            <img src="../../assets/images/<?php echo $Logo; ?>" alt="Logotipo" style="height: 60px;max-height: 60px;width: 100px;max-width: 100px;">
             <p class="centrado"><?php echo $Tienda; ?>
                 <br><?php echo $Eslogan; ?>
                 <br><?php echo $Direccion; ?>
@@ -65,7 +65,7 @@ $res_ticket = mysqli_query($mysqli, $datos_ticket);
                 </table>
 
             </div>
-            <p class="justify-content-center d-flex" style="text-align: center;">¡GRACIAS POR SU COMPRA!
+            <p class="justify-content-center d-flex mt-4" style="text-align: center;">¡GRACIAS POR SU COMPRA!
                 <br><?php echo $Tienda; ?>
             	<br><?php echo $Direccion; ?>
             	<br><?php echo $Telefono; ?>
