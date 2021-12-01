@@ -11,62 +11,70 @@ $res_ticket = mysqli_query($mysqli, $datos_ticket);
 <html>
     <head>
         <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="../../assets/css/bootstrap.min.css">
+        
     </head>
     <body>
         <div class="ticket">
         	<div style="text-align: center;">
-            <img src="https://yt3.ggpht.com/-3BKTe8YFlbA/AAAAAAAAAAI/AAAAAAAAAAA/ad0jqQ4IkGE/s900-c-k-no-mo-rj-c0xffffff/photo.jpg" alt="Logotipo" style="height: 60px;max-height: 60px;width: 100px;max-width: 100px;">
+            <img src="../../assets/images/cabecera.png" alt="Logotipo" style="height: 60px;max-height: 60px;width: 100px;max-width: 100px;">
             <p class="centrado"><?php echo $Tienda; ?>
                 <br><?php echo $Eslogan; ?>
                 <br><?php echo $Direccion; ?>
                 <br>23/08/2017 08:22 a.m.</p>
             </div>
-            <table>
-                <thead>
-                    <tr>
-                        <th class="cantidad">CANT</th>
-                        <th class="articulo">PRODUCTO</th>
-                        <th class="precio">PREC</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                    if($res_ticket)
-                    {
-                        $total_ticket = 0;
-                    	while($datos = mysqli_fetch_assoc($res_ticket))
-                    	{
-                    		echo '<tr>';
-                    		echo '<td class="cantidad">'.$datos['cantidad'].'</td>';
-                    		echo '<td class="articulo">'.$datos['articulo'].'</td>';
-                    		echo '<td class="precio">$'.$datos['precio'].'</td>';
-                    		echo '</tr>';
+            <div class="container">
+                <table class="w-100">
+                    <thead>
+                        <tr>
+                            <th class="cantidad">CANT</th>
+                            <th class="articulo">PRODUCTO</th>
+                            <th class="precio">PRECIO</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        if($res_ticket)
+                        {
+                            $total_ticket = 0;
+                            while($datos = mysqli_fetch_assoc($res_ticket))
+                            {
+                                echo '<tr>';
+                                echo '<td class="cantidad">'.$datos['cantidad'].'</td>';
+                                echo '<td class="articulo">'.$datos['articulo'].'</td>';
+                                echo '<td class="precio">$'.$datos['precio'].'</td>';
+                                echo '</tr>';
+    
+                                $total_ticket = $datos['cantidad'] * $datos['precio'];
+                            }
+    
+                        }  
+    
+                        ?>
+                        <tr>
+                            <td class="cantidad"></td>';
+                            <td class="articulo"></td>';
+                            <td class="precio">________</td>';
+                        </tr>
+                        <tr>
+                            <td class="cantidad">Total</td>';
+                            <td class="articulo"></td>';
+                            <td class="precio">$<?php echo $total_ticket; ?></td>';
+                        </tr>
+                    </tbody>
+                </table>
 
-                            $total_ticket = $datos['cantidad'] * $datos['precio'];
-                    	}
-
-                    }  
-
-                    ?>
-                    <tr>
-                        <td class="cantidad"></td>';
-                        <td class="articulo"></td>';
-                        <td class="precio">________</td>';
-                    </tr>
-                    <tr>
-                        <td class="cantidad">Total</td>';
-                        <td class="articulo"></td>';
-                        <td class="precio">$<?php echo $total_ticket; ?></td>';
-                    </tr>
-                </tbody>
-            </table>
-            <p class="centrado">¡GRACIAS POR SU COMPRA!
+            </div>
+            <p class="justify-content-center d-flex" style="text-align: center;">¡GRACIAS POR SU COMPRA!
                 <br><?php echo $Tienda; ?>
             	<br><?php echo $Direccion; ?>
             	<br><?php echo $Telefono; ?>
             	<br><?php echo $Correo; ?></p>
         </div>
-        <button id="print" onclick="imprimir()">Imprimir</button>
+        <div>
+
+            <button style="float:right" id="print" onclick="imprimir()">Imprimir</button>
+        </div>
     </body>
 </html>
 <script type="text/javascript">
