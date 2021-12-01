@@ -52,13 +52,13 @@ $res_ticket = mysqli_query($mysqli, $datos_ticket);
     
                         ?>
                         <tr>
-                            <td class="cantidad"></td>';
-                            <td class="articulo"></td>';
-                            <td class="precio">________</td>';
+                            <td class="cantidad"></td>
+				<td class="articulo"></td>
+                            <td class="precio">________</td>
                         </tr>
                         <tr>
-                            <td class="cantidad">Total</td>';
-                            <td class="articulo"></td>';
+                            <td class="cantidad">Total</td>
+                            <td class="articulo"></td>
                             <td class="precio">$<?php echo $total_ticket; ?></td>';
                         </tr>
                     </tbody>
