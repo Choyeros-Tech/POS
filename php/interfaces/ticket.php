@@ -59,7 +59,7 @@ $res_ticket = mysqli_query($mysqli, $datos_ticket);
                         <tr>
                             <td class="cantidad">Total</td>
                             <td class="articulo"></td>
-                            <td class="precio">$<?php echo $total_ticket; ?></td>';
+                            <td class="precio">$<?php echo $total_ticket; ?></td>
                         </tr>
                     </tbody>
                 </table>
