@@ -538,7 +538,7 @@ require("../configuration/config.php");
     function ticket(id)
     {
         url = "ticket.php?ticket=" + id;
-        window.open(url,'MyWindow','width=600,height=650');
+        window.open(url,'_blank','width=600,height=650');
         location.reload();
         return false;
 
@@ -547,7 +547,7 @@ require("../configuration/config.php");
     function ticket2(id)
     {
         url = "ticket.php?ticket=" + id;
-        window.open(url,'MyWindow','width=600,height=650');
+        window.open(url,'_blank','width=600,height=650');
         return false;
 
     }
