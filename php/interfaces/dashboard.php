@@ -160,7 +160,7 @@ require("../configuration/config.php");
                                         </div>
                                         <div class="col-md-2 mb-2">
                                             <label for="validationCustom01">Cantidad:</label>
-                                            <input type="number" class="form-control" id="cantidad" name="cantidad" placeholder="Cantidad" required="">
+                                            <input min="1" type="number" class="form-control" id="cantidad" name="cantidad" placeholder="Cantidad" required="">
                                         </div>
                                         <div class="col-md-3 mb-3">
                                             <label for="validationCustom01">Venta:</label>
@@ -295,7 +295,7 @@ require("../configuration/config.php");
                     <div class="row" id="divefectivo" style="display: none;">
                         <div class="col-md-12 mb-12">
                             <label for="validationCustom01">Efectivo:</label>
-                            <input type="number" step="0.01" name="dinero" id="dinero" class="form-control">
+                            <input min="1" type="number" step="0.01" name="dinero" id="dinero" class="form-control">
                         </div>
                     </div>
                     <div class="row" id="divtarjeta" style="display: none;">
@@ -311,11 +311,11 @@ require("../configuration/config.php");
                             <div class="row">
                                 <div class="col-md-6 mb-6">
                                     <label for="validationCustom01">Cantidad en Efectivo:</label>
-                                    <input type="text" name="cefectivo" id="cefectivo" class="form-control">
+                                    <input min= "1" type="number" name="cefectivo" id="cefectivo" class="form-control">
                                 </div>
                                 <div class="col-md-6 mb-6">
                                     <label for="validationCustom01">Cantidad en Tarjeta:</label>
-                                    <input type="text" name="cefectivo" id="ctarjeta" class="form-control">
+                                    <input min= "1" type="number" name="cefectivo" id="ctarjeta" class="form-control">
                                 </div>
                             </div>
                         </div>
@@ -351,130 +351,145 @@ require("../configuration/config.php");
 <!-- others plugins -->
 <script src="../../assets/js/plugins.js"></script>
 <script src="../../assets/js/scripts.js"></script>
-<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script type="text/javascript">
-    var elementos =  new Array(); 
-    var elementos_visuales =  new Array(); 
+    var elementos = new Array();
+    var elementos_visuales = new Array();
     var contador = 0;
-    $("#agregar" ).click(function() {
+    function alert(title,text,tipo) {
+        Swal.fire({
+            icon: tipo,
+            title: title,
+            text: text,
+        })
+    }
+    $("#agregar").click(function () {
         var articulo = $("#articulo").val();
         var cantidad = $("#cantidad").val();
         var tipocobro = $("#tipocobro").val();
-        if(articulo == "")
-        {
-            console.log("Seleccione Un articulo");
+        if (articulo == null) {
+            alert('Oops...','Seleccione Un artículo','error')
+            return true;
         }
-        else
-        {
-            $.ajax({
-              type: "POST",
-              url: "../request/precios.php",
-              data: {'articulo': articulo, 'tipocobro': tipocobro, 'cantidad': cantidad},
-              success: function(data)
-              {
-                if(data == "stock")
-                {
-                 alert("sin stock suficiente");
-             }
-             else
-             {
-                var temp = new Array();
-                temp = data.split(",");
+        if (cantidad < 1) {
+            alert('Oops...','Cantidad no puede ser menos de 1','error')
+            return true;
+        }
+        if (tipocobro == null) {
+            alert('Oops...','Favor de seleccionar una opción en tipo de venta','error')
+            return true;
+        }
+        $.ajax({
+            type: "POST",
+            url: "../request/precios.php",
+            data: {
+                'articulo': articulo,
+                'tipocobro': tipocobro,
+                'cantidad': cantidad
+            },
+            success: function (data) {
+                if (data == "stock") {
+                    alert("sin stock suficiente");
+                } else {
+                    var temp = new Array();
+                    temp = data.split(",");
 
-                var precio = temp[1];
-                var nombre = temp[0];
+                    var precio = temp[1];
+                    var nombre = temp[0];
 
-                var total = cantidad * precio;
-                elementos[contador] = {articulo, cantidad, precio, total}; //articulo = id articulo
-                elementos_visuales[contador] = {contador, nombre, cantidad, precio, total}; //articulo = id articulo
-                console.log(elementos[contador]);
-                $("#lista").fadeIn();
-                $("#lista").fadeIn("slow");
-                $("#lista").fadeIn(3000);
-                actualizar_elementos(); // se usa nombre por cuestiones de estetica
-                contador++;
+                    var total = cantidad * precio;
+                    elementos[contador] = {
+                        articulo,
+                        cantidad,
+                        precio,
+                        total
+                    }; //articulo = id articulo
+                    elementos_visuales[contador] = {
+                        contador,
+                        nombre,
+                        cantidad,
+                        precio,
+                        total
+                    }; //articulo = id articulo
+                    console.log(elementos[contador]);
+                    $("#lista").fadeIn();
+                    $("#lista").fadeIn("slow");
+                    $("#lista").fadeIn(3000);
+                    actualizar_elementos(); // se usa nombre por cuestiones de estetica
+                    contador++;
+                }
+
             }
+        });
+    });
 
-        }
-    });
-        }
-    });
-    function agregar(id,nombre, cantidad, precio, total)
-    {
-        var renglon = "<tr><td>"+nombre+"</td><td>"+cantidad+"</td><td>$"+precio+"</td><td>$"+total+"</td><td><i onclick=\"eliminar("+id+");\" class=\"ti-trash\"></i></td></tr>";
+    function agregar(id, nombre, cantidad, precio, total) {
+        var renglon = "<tr><td>" + nombre + "</td><td>" + cantidad + "</td><td>$" + precio + "</td><td>$" + total + "</td><td><i onclick=\"eliminar(" + id + ");\" class=\"ti-trash\"></i></td></tr>";
         $("#productos").append(renglon);
     }
 
-    function eliminar(id)
-    {
+    function eliminar(id) {
         delete elementos[id];
         delete elementos_visuales[id];
         actualizar_elementos();
     }
 
-    function actualizar_elementos()
-    {
-       $("#productos").empty();
-       var renglon = "";
-        elementos_visuales.forEach(function(elemento_visual, index){
+    function actualizar_elementos() {
+        $("#productos").empty();
+        var renglon = "";
+        elementos_visuales.forEach(function (elemento_visual, index) {
             console.log("id " + index + "Nombre " + elemento_visual.nombre);
-            var renglon =  renglon + "<tr><td>"+elemento_visual.nombre+"</td><td>"+elemento_visual.cantidad+"</td><td>$"+elemento_visual.precio+"</td><td>$"+elemento_visual.total+"</td><td><i onclick=\"eliminar("+elemento_visual.contador+");\" class=\"ti-trash\"></i></td></tr>";
+            var renglon = renglon + "<tr><td>" + elemento_visual.nombre + "</td><td>" + elemento_visual.cantidad + "</td><td>$" + elemento_visual.precio + "</td><td>$" + elemento_visual.total + "</td><td><i onclick=\"eliminar(" + elemento_visual.contador + ");\" class=\"ti-trash\"></i></td></tr>";
             $("#productos").append(renglon);
         });
         var total_compra = Contar_Total();
-        var renglon =  renglon + "<tr><td>TOTAL</td><td></td><td></td><td></td><td><b>$"+total_compra+"</b></td></tr>";
+        var renglon = renglon + "<tr><td>TOTAL</td><td></td><td></td><td></td><td><b>$" + total_compra + "</b></td></tr>";
         $("#productos").append(renglon);
-        
+
     }
 
-    $("#mpago").change(function() {
+    $("#mpago").change(function () {
         var mpago = $("#mpago").val();
-        if(mpago == "Efectivo")
-        {
+        if (mpago == "Efectivo") {
             $("#divefectivo").css('display', 'block');
             $("#divtarjeta").css('display', 'none');
             $("#divmixto").css('display', 'none');
-        }
-        else if(mpago == "Tarjeta")
-        {
+        } else if (mpago == "Tarjeta") {
             $("#divefectivo").css('display', 'none');
             $("#divtarjeta").css('display', 'block');
             $("#divmixto").css('display', 'none');
-        }
-        else
-        {
+        } else {
             $("#divefectivo").css('display', 'none');
             $("#divtarjeta").css('display', 'none');
             $("#divmixto").css('display', 'block');
         }
-      
+
     });
 
-    
 
-    function Contar_Total()
-    {
+
+    function Contar_Total() {
         var total_de_venta = 0;
 
-        elementos.forEach(function(elemento, index){
+        elementos.forEach(function (elemento, index) {
             console.log("id " + index + "Cantidad " + elemento.cantidad + " Precio: " + elemento.precio);
             var total_articulo = elemento.cantidad * elemento.precio;
             total_de_venta = total_de_venta + total_articulo;
-            console.log("Total->" +  total_de_venta);
+            console.log("Total->" + total_de_venta);
         });
 
         return total_de_venta;
 
     }
-    
 
-    $("#finalizar" ).click(function() {
+
+    $("#finalizar").click(function () {
         $('#modalpago').modal('show');
     });
 
-    $("#terminarventa" ).click(function() {
+    $("#terminarventa").click(function () {
 
-        var total_de_venta =  Contar_Total();
+        var total_de_venta = Contar_Total();
 
         var mpago = $("#mpago").val();
         var dinero = $("#dinero").val();
@@ -483,89 +498,86 @@ require("../configuration/config.php");
         var ctarjeta = $("#ctarjeta").val();
         var cliente = $("#cliente").val();
 
+        if (articulo == null) {
+            alert('Oops...','Seleccione Un artículo','error')
+            return true;
+        }
+        if (dinero < 1 || cefectivo < 1 || ctarjeta < 1) {
+            alert('Oops...','Cantidad no puede ser menos de 1','error')
+            return true;
+        }
+
         var total_ingreso = 0;
 
-        if(mpago == "Efectivo")
-        {
+        if (mpago == "Efectivo") {
             total_ingreso = 0;
             total_ingreso = parseInt(dinero);
-        }
-        else if(mpago == "Tarjeta")
-        {
+        } else if (mpago == "Tarjeta") {
             total_ingreso = 0;
             total_ingreso = parseInt(total_de_venta);
-        }
-        else
-        {
+        } else {
             total_ingreso = 0;
-            total_ingreso = parseInt(cefectivo) +  parseInt(ctarjeta);
+            total_ingreso = parseInt(cefectivo) + parseInt(ctarjeta);
         }
 
-        console.log("ingreso->"+total_ingreso);
+        console.log("ingreso->" + total_ingreso);
 
-        if(total_de_venta <= total_ingreso)
-        {
+        if (total_de_venta <= total_ingreso) {
             var cambio = total_ingreso - total_de_venta;
-            alert("El cambio es de: $"+cambio);
+            alert("El cambio es de: $" + cambio);
 
             $.ajax({
-              type: "POST",
-              url: "../request/venta.php",
-              data: {'array': JSON.stringify(elementos), 'cliente': cliente, 'mpago': mpago, 'referencia': referencia},//capturo array     
-              success: function(data)
-              {
-                if(data != "error")
-                {
-                    ticket(data);
+                type: "POST",
+                url: "../request/venta.php",
+                data: {
+                    'array': JSON.stringify(elementos),
+                    'cliente': cliente,
+                    'mpago': mpago,
+                    'referencia': referencia
+                }, //capturo array     
+                success: function (data) {
+                    if (data != "error") {
+                        ticket(data);
+
+                    } else {
+                        alert(data);
+                    }
 
                 }
-                else
-                {
-                    alert(data);
-                }
-
-            }
             });
-        }
-        else
-        {
+        } else {
             var cambio = total_de_venta - total_ingreso;
             alert("falta la cantidad de: $" + cambio);
         }
-       
+
     });
 
-    function ticket(id)
-    {
+    function ticket(id) {
         url = "ticket.php?ticket=" + id;
-        window.open(url,'_blank','width=600,height=650');
+        window.open(url, '_blank', 'width=600,height=650');
         location.reload();
         return false;
 
     }
 
-    function ticket2(id)
-    {
+    function ticket2(id) {
         url = "ticket.php?ticket=" + id;
-        window.open(url,'_blank','width=600,height=650');
+        window.open(url, '_blank', 'width=600,height=650');
         return false;
 
     }
 
-    $("#listaver").change(function() {
+    $("#listaver").change(function () {
         var listaver = $("#listaver").val();
-        if(listaver == "Venta")
-        {
+        if (listaver == "Venta") {
             $("#divtickets").fadeOut(300);
             $("#divventa").fadeIn(1000);
             $('#leyenda').text('Registro de Venta');
-        }
-        else
-        {
+        } else {
             $("#divventa").fadeOut(300);
             $("#divtickets").fadeIn(1000);
             $('#leyenda').text('Lista de Tickets');
-            
+
         }
     });
 </script>
