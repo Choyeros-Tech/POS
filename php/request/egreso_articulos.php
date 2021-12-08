@@ -18,16 +18,13 @@ if($ejecutar)
 	{
 		$contar = mysqli_fetch_assoc($res_inventario);
 		$total_mercancia = $contar['cantidad'] - $cantidad;
-
+		
 		$actualizar_inventario = "UPDATE inventario SET cantidad = '$total_mercancia' WHERE articulo = '$articulo'";
 		$res_actualiar = mysqli_query($mysqli, $actualizar_inventario);
-		if($res_actualiar)
-		{
-			echo "<script>location.href='../interfaces/egresos.php?registrado=true'</script>";
-		}
-		else
-		{
-			echo "1".mysqli_error($mysqli);
+		if($res_actualiar){
+			echo json_encode(array('status'=>true,'message'=>'Su artículo fue actualizado correctamente'));
+		}else{
+			echo json_encode(array('status'=>false,'message'=>mysqli_error($mysqli)));
 		}
 
 	} 

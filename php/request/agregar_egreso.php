@@ -20,14 +20,10 @@ else
 }
 
 $ejecutar = mysqli_query($mysqli, $query);
-if($ejecutar)
-{
-	echo "<script>location.href='../interfaces/egresos.php?registrado=true'</script>";
+if($ejecutar){
+	echo json_encode(array('status'=>true,'message'=>'Pago realizado correctamente'));
+}else{
+	echo json_encode(array('status'=>false,'message'=>mysqli_error($mysqli)));
 }
-else
-{
-	echo mysqli_error($mysqli);
-}
-
 
 ?>

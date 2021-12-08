@@ -1,14 +1,14 @@
 <?php
 require("../configuration/config.php");
-/*$servidor = "localhost";
+$servidor = "localhost";
 $usuario = "root";
-$psw = "";
-$basedatos = $BD;*/
-
-$servidor = $BD.".hosting-data.io";
-$usuario = "dbo793410949";
-$psw = "Romero10.";
+$psw = "root";
 $basedatos = $BD;
+
+// $servidor = $BD.".hosting-data.io";
+// $usuario = "dbo793410949";
+// $psw = "Romero10.";
+// $basedatos = $BD;
 
 $mysqli = new mysqli($servidor, $usuario, $psw, $basedatos);
 if ($mysqli->connect_errno) {

@@ -1,13 +1,13 @@
 <?php
-/*$servidor_admin = "localhost";
+$servidor_admin = "localhost";
 $usuario_admin = "root";
-$psw_admin = "";
-$basedatos_admin = "Administrador_PV";*/
+$psw_admin = "root";
+$basedatos_admin = "Administrador_PV";
 
-$servidor_admin = "db793410898.hosting-data.io";
-$usuario_admin = "dbo793410898";
-$psw_admin = "Romero10.";
-$basedatos_admin = "db793410898";
+// $servidor_admin = "db793410898.hosting-data.io";
+// $usuario_admin = "dbo793410898";
+// $psw_admin = "Romero10.";
+// $basedatos_admin = "db793410898";
 
 $admin = new mysqli($servidor_admin, $usuario_admin, $psw_admin, $basedatos_admin);
 if ($admin->connect_errno) {

@@ -30,22 +30,25 @@ if($ejecutar)
 {
 	if(isset($_POST['inicial']))
 	{
-		echo "<script>location.href='../interfaces/dashboard.php?registrado=true'</script>";
+		echo json_encode(array('status'=>true,'message'=>'Guardado realizado correctamente'));
+
 	}
 	elseif($tipo == "Recibo de Dinero")
 	{
-		echo "<script> window.open('../interfaces/recibo.php?id=".$consecutivo."','_blank'); location.href='../interfaces/dashboard.php?registrado=true'</script>";
+		echo json_encode(array('status'=>true,'message'=>'Guardado de efectivo realizado correctamente','recibo'=>true,'reciboMessage'=>'../interfaces/recibo.php?id='.$consecutivo));
+
 
 	}
 	else
 	{
-		echo "<script>location.href='../interfaces/ingresos.php?registrado=true'</script>";
+		echo json_encode(array('status'=>true,'message'=>'Guardado de efectivo realizado correctamente'));
 	}
 	
 }
 else
 {
-	echo mysqli_error($mysqli);
+	echo json_encode(array('status'=>false,'message'=>mysqli_error($mysqli)));
+
 }
 
 

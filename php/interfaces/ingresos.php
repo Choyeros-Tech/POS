@@ -21,6 +21,9 @@ require("../configuration/config.php");
     <link rel="stylesheet" href="../../assets/css/responsive.css">
     <link rel="stylesheet" href="../../assets/css/bootstrap-select.css">
     <script src="../../assets/js/vendor/modernizr-2.8.3.min.js"></script>
+    <style>
+        label.error { float: none; color: red; padding-left: .5em; vertical-align: middle; font-size: 12px; }
+    </style>
 </head>
 
 <body>
@@ -165,11 +168,11 @@ require("../configuration/config.php");
 
             </div>
             <div class="modal-body">
-                <form class="needs-validation" action="../request/agregar_ingreso.php" method="POST">
+                <form class="needs-validation" id="efectivoForm" action="../request/agregar_ingreso.php" method="POST">
                     <div class="form-row">
                         <div class="col-md-6 mb-6">
                             <label for="validationCustom01">Cantidad:</label>
-                            <input type="number" step="0.01" class="form-control" id="cantidad" name="cantidad" placeholder="Cantidad Exacta Que Ingresa a Caja" required="">
+                            <input min="1" type="number" step="0.01" class="form-control" id="cantidad" name="cantidad" placeholder="Cantidad Exacta Que Ingresa a Caja" required>
                         </div>
                         <div class="col-md-6 mb-6">
                             <label for="validationCustom01">Tipo Ingreso:</label>
@@ -183,11 +186,11 @@ require("../configuration/config.php");
                     <div class="form-row" style="display: none;" id="comentario">
                         <div class="col-md-12 mb-12">
                             <label for="validationCustom01">Tipo de Ingreso:</label>
-                            <textarea class="form-control" rows="3" name="otro" id="otro" placeholder="Especifique el tipo de ingreso"></textarea>
+                            <textarea class="form-control" rows="3" name="otro" id="otro" placeholder="Especifique el tipo de ingreso" required></textarea>
                         </div>
                     </div>
                     <br>
-                    <button class="btn btn-primary pull-right" type="submit">Registrar</button>
+                    <button class="btn btn-primary pull-right" type="button" onclick="ingresoEfect()">Registrar</button>
                 </form>
             </div>
         </div>
@@ -207,7 +210,7 @@ require("../configuration/config.php");
 
             </div>
             <div class="modal-body">
-                <form class="needs-validation" action="../request/ingreso_articulos.php" method="POST">
+                <form id="formArt" class="needs-validation" action="../request/ingreso_articulos.php" method="POST">
                     <div class="form-row">
                         <div class="col-md-10 mb-10">
                             <label for="validationCustom01">Articulo:</label>
@@ -218,11 +221,11 @@ require("../configuration/config.php");
                         </div>
                         <div class="col-md-2 mb-2">
                             <label for="validationCustom01">Cantidad:</label>
-                            <input type="number" name="cantidad" id="cantidad" class="form-control">
+                            <input min="1" type="number" name="cantidad" id="cantidad" class="form-control" required>
                         </div>
                     </div>
                     <br>
-                    <button class="btn btn-primary pull-right" type="submit">Registrar</button>
+                    <button class="btn btn-primary pull-right" type="button" onclick="ingresoArticu()">Registrar</button>
                 </form>
             </div>
         </div>
@@ -247,8 +250,64 @@ require("../configuration/config.php");
 <script src="../../assets/js/bootstrap-select.min.js"></script>
 <script src="../../assets/js/plugins.js"></script>
 <script src="../../assets/js/scripts.js"></script>
-<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/jquery.validate.min.js"></script>
+<script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.10.0/localization/messages_es.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.24.0/axios.min.js" integrity="sha512-u9akINsQsAkG9xjc1cnGF4zw5TFDwkxuc9vUp5dltDWYCSmyd0meygbvgXrlc/z7/o4a19Fb5V0OUE58J7dcyw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
 <script type="text/javascript">
+    function alert(title,text,tipo) {
+        Swal.fire({
+            icon: tipo,
+            title: title,
+            text: text,
+        })
+    }
+    function ingresoEfect() {
+        if ($("#efectivoForm").valid()) {
+            axios.post('../request/agregar_ingreso.php', $('#efectivoForm').serialize())
+            .then(
+                resp => {
+                    alert(((resp.data.status)?'Guardado correcto':'Error al guardar'),`${resp.data.message}`,((resp.data.status)?'success':'error'))
+                    if (resp.data.status) {
+                        $("#efectivoForm")[0].reset();
+                        $('#efectivo').modal('hide');
+                    }
+                    if (resp.data.recibo) {
+                        window.open(resp.data.reciboMessage,'_blank');
+                    }
+                }
+            ).catch(error => {
+                if (error.response.status === 422) {
+                    console.log(error);
+                }
+            })
+        }
+        
+    };
+    function ingresoArticu() {
+        if ($("#formArt #articulo").val() == null) {
+            alert('Oops...','Seleccione Un Articulo','error')
+            return true;
+        }
+        if ($("#formArt").valid()) {
+            axios.post('../request/ingreso_articulos.php', $('#formArt').serialize())
+            .then(
+                resp => {
+                    alert(((resp.data.status)?'Guardado correcto':'Error al guardar'),`${resp.data.message}`,((resp.data.status)?'success':'error'))
+                    if (resp.data.status) {
+                        $("#formArt")[0].reset();
+                        $('#articulos').modal('hide');
+                    }
+                }
+            ).catch(error => {
+                if (error.response.status === 422) {
+                    console.log(error);
+                }
+            })
+        }
+        
+    };
     $("#tipo").change(function() {
         var tipo = $("#tipo").val();
         if(tipo == "Otro")

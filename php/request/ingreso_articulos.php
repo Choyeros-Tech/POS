@@ -23,23 +23,24 @@ if($ejecutar)
 		$res_actualiar = mysqli_query($mysqli, $actualizar_inventario);
 		if($res_actualiar)
 		{
-			echo "<script>location.href='../interfaces/ingresos.php?registrado=true&ingreso=mercancia'</script>";
+			echo json_encode(array('status'=>true,'message'=>'Articulo actualizado correctamente'));
+
 		}
 		else
 		{
-			echo "1".mysqli_error($mysqli);
+			echo json_encode(array('status'=>false,'message'=>mysqli_error($mysqli)));
 		}
 
 	} 
 	else
 	{
-		echo "2".mysqli_error($mysqli);
+		echo json_encode(array('status'=>false,'message'=>mysqli_error($mysqli)));
 	}
 
 }
 else
 {
-	echo "3".mysqli_error($mysqli);
+	echo json_encode(array('status'=>false,'message'=>mysqli_error($mysqli)));
 }
 
 
