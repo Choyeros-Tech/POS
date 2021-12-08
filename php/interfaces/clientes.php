@@ -24,6 +24,12 @@ require("../configuration/config.php");
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.2.3/css/responsive.bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.2.3/css/responsive.jqueryui.min.css">
     <script src="../../assets/js/vendor/modernizr-2.8.3.min.js"></script>
+    
+    
+    
+    <style>
+        label.error { float: none; color: red; padding-left: .5em; vertical-align: middle; font-size: 12px; }
+    </style>
 </head>
 
 <body>
@@ -140,7 +146,7 @@ require("../configuration/config.php");
                                 <h4 class="header-title mb-0">Registro de Clientes</h4>
                             </div>
                             <br>
-                            <form class="needs-validation" action="../request/agregar_cliente.php" method="POST">
+                            <form id="clienteForm" class="needs-validation" action="../request/agregar_cliente.php" method="POST">
                                 <div class="form-row">
                                     <div class="col-md-4 mb-3">
                                         <label for="validationCustom01">Nombre:</label>
@@ -158,11 +164,11 @@ require("../configuration/config.php");
                                 <div class="form-row">
                                     <div class="col-md-12 mb-12">
                                         <label for="validationCustom02">Dirección:</label>
-                                        <textarea rows="3" class="form-control" name="direccion" placeholder="Dirección del proveedor"></textarea>
+                                        <textarea rows="3" class="form-control" name="direccion" placeholder="Dirección del proveedor" required></textarea>
                                     </div>
                                 </div>
                                 <br>
-                                <button class="btn btn-primary pull-right" type="submit">Registrar</button>
+                                <button class="btn btn-primary pull-right" onclick="registroClient()" type="button">Registrar</button>
                             </form>
                             <button class="btn btn-success pull-right" data-toggle="modal" data-target="#listaClientes">Lista de Clientes</button>
                         </div>
@@ -232,17 +238,42 @@ require("../configuration/config.php");
     <script src="https://cdn.datatables.net/responsive/2.2.3/js/responsive.bootstrap.min.js"></script>
 <script src="../../assets/js/plugins.js"></script>
 <script src="../../assets/js/scripts.js"></script>
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/jquery.validate.min.js"></script>
+    <script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.10.0/localization/messages_es.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.24.0/axios.min.js" integrity="sha512-u9akINsQsAkG9xjc1cnGF4zw5TFDwkxuc9vUp5dltDWYCSmyd0meygbvgXrlc/z7/o4a19Fb5V0OUE58J7dcyw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    
     <script type="text/javascript">
         $('#tablaclientes').DataTable( {
-    responsive: true
-} );
+            responsive: true
+        } );
+        function alert(title,text,tipo) {
+            Swal.fire({
+                icon: tipo,
+                title: title,
+                text: text,
+            })
+        }
+        function registroClient() {
+            // $("#egreEfect").valid();
+            if ($("#clienteForm").valid()) {
+                axios.post('../request/agregar_cliente.php', $('#clienteForm').serialize())
+                .then(
+                    resp => {
+                        alert(((resp.data.status)?'Guardado correcto':'Error al guardar'),`${resp.data.message}`,((resp.data.status)?'success':'error'))
+                        if (resp.data.status) {
+                            $("#clienteForm")[0].reset();
+                        }
+                    }
+                ).catch(error => {
+                    if (error.response.status === 422) {
+                        console.log(error);
+                    }
+                })
+            }
+            
+        };
     </script>
-    <?php
-if(isset($_GET['registrado']))
-{
-    echo '<script>swal("Registrado!", "Lo podrás ver en tu lista!", "success");</script>';
-}
-?>
 </body>
 
 </html>

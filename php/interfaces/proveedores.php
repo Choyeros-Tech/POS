@@ -24,6 +24,9 @@ require("../configuration/config.php");
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.2.3/css/responsive.bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.2.3/css/responsive.jqueryui.min.css">
     <script src="../../assets/js/vendor/modernizr-2.8.3.min.js"></script>
+    <style>
+        label.error { float: none; color: red; padding-left: .5em; vertical-align: middle; font-size: 12px; }
+    </style>
 </head>
 
 <body>
@@ -140,29 +143,29 @@ require("../configuration/config.php");
                                 <h4 class="header-title mb-0">Registro de Proveedores</h4>
                             </div>
                             <br>
-                            <form class="needs-validation" action="../request/agregar_proveedor.php" method="POST">
+                            <form id="provedorForm" class="needs-validation" action="../request/agregar_proveedor.php" method="POST">
                                 <div class="form-row">
                                     <div class="col-md-4 mb-3">
                                         <label for="validationCustom01">Nombre:</label>
-                                        <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Nombre Completo" required="">
+                                        <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Nombre Completo" required>
                                     </div>
                                     <div class="col-md-4 mb-3">
                                         <label for="validationCustom01">Teléfono:</label>
-                                        <input type="text" class="form-control" id="telefono" name="telefono" placeholder="Número de Teléfono" required="">
+                                        <input type="text" class="form-control" id="telefono" name="telefono" placeholder="Número de Teléfono" required>
                                     </div>
                                     <div class="col-md-4 mb-3">
                                         <label for="validationCustom01">Correo:</label>
-                                        <input type="email" class="form-control" id="correo" name="correo" placeholder="Correo Electronico" required="">
+                                        <input type="email" class="form-control" id="correo" name="correo" placeholder="Correo Electronico" required>
                                     </div>
                                 </div>
                                 <div class="form-row">
                                     <div class="col-md-12 mb-12">
                                         <label for="validationCustom02">Dirección:</label>
-                                        <textarea rows="3" class="form-control" name="direccion" placeholder="Dirección del proveedor"></textarea>
+                                        <textarea rows="3" class="form-control" name="direccion" placeholder="Dirección del proveedor" required></textarea>
                                     </div>
                                 </div>
                                 <br>
-                                <button class="btn btn-primary pull-right" type="submit">Registrar</button>
+                                <button class="btn btn-primary pull-right" onclick="provedorSend()" type="button">Registrar</button>
                             </form>
                             <button class="btn btn-success pull-right" data-toggle="modal" data-target="#listaProveedores">Lista de Proveedores</button>
                         </div>
@@ -232,10 +235,40 @@ require("../configuration/config.php");
 <script src="https://cdn.datatables.net/1.10.18/js/dataTables.bootstrap4.min.js"></script>
 <script src="https://cdn.datatables.net/responsive/2.2.3/js/dataTables.responsive.min.js"></script>
 <script src="https://cdn.datatables.net/responsive/2.2.3/js/responsive.bootstrap.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/jquery.validate.min.js"></script>
+<script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.10.0/localization/messages_es.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.24.0/axios.min.js" integrity="sha512-u9akINsQsAkG9xjc1cnGF4zw5TFDwkxuc9vUp5dltDWYCSmyd0meygbvgXrlc/z7/o4a19Fb5V0OUE58J7dcyw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script type="text/javascript">
     $('#tablaproveedores').DataTable( {
         responsive: true
     } );
+    function alert(title,text,tipo) {
+        Swal.fire({
+            icon: tipo,
+            title: title,
+            text: text,
+        })
+    }
+    function provedorSend() {
+        // $("#egreEfect").valid();
+        if ($("#provedorForm").valid()) {
+            axios.post('../request/agregar_proveedor.php', $('#provedorForm').serialize())
+            .then(
+                resp => {
+                    alert(((resp.data.status)?'Guardado correcto':'Error al guardar'),`${resp.data.message}`,((resp.data.status)?'success':'error'))
+                    if (resp.data.status) {
+                        $("#provedorForm")[0].reset();
+                    }
+                }
+            ).catch(error => {
+                if (error.response.status === 422) {
+                    console.log(error);
+                }
+            })
+        }
+        
+    };
 </script>
 <?php
 if(isset($_GET['registrado']))
