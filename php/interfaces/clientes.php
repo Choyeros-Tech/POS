@@ -164,7 +164,7 @@ require("../configuration/config.php");
                                 <div class="form-row">
                                     <div class="col-md-12 mb-12">
                                         <label for="validationCustom02">Dirección:</label>
-                                        <textarea rows="3" class="form-control" name="direccion" placeholder="Dirección del proveedor" required></textarea>
+                                        <textarea rows="3" class="form-control" name="direccion" placeholder="Dirección del cliente" required></textarea>
                                     </div>
                                 </div>
                                 <br>
