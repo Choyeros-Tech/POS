@@ -19,15 +19,15 @@ if($ejecutar)
 {
 	$agregar_inventario = "INSERT INTO inventario(articulo) VALUES('$consecutivo')";
 	$res_inventario = mysqli_query($mysqli, $agregar_inventario);
-	if($res_inventario)
-	{
-		echo "<script>location.href='../interfaces/articulos.php?registrado=true'</script>";
+	if($res_inventario){
+		echo json_encode(array('status'=>true,'message'=>'Articulo agregado correctamente'));
+	}else{
+		echo json_encode(array('status'=>false,'message'=>mysqli_error($mysqli)));
 	}
-	
 }
 else
 {
-	echo mysqli_error($mysqli);
+	echo json_encode(array('status'=>false,'message'=>mysqli_error($mysqli)));
 }
 
 
