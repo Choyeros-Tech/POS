@@ -152,19 +152,23 @@ require("../configuration/config.php");
                                 </div>
                                 <br>
                                 <div class="form-row">
-                                    <div class="col-md-3 mb-3">
+                                    <div class="col-md-2 mb-3">
+                                        <label for="validationCustom01">Cantidad de producto:</label>
+                                        <input min="1" type="number" class="form-control" id="cantidad" name="cantidad" placeholder="Cantidad del producto" required>
+                                    </div>
+                                    <div class="col-md-2 mb-3">
                                         <label for="validationCustom01">Costo Venta:</label>
                                         <input min=".1" type="number" step=".01" class="form-control" id="venta" name="venta" placeholder="Costo de Venta" required>
                                     </div>
-                                    <div class="col-md-3 mb-3">
+                                    <div class="col-md-2 mb-3">
                                         <label for="validationCustom01">Costo Compra:</label>
                                         <input min=".1" type="number" step=".01" class="form-control" id="compra" name="compra" placeholder="Costo de Compra" required>
                                     </div>
-                                    <div class="col-md-3 mb-3">
+                                    <div class="col-md-2 mb-3">
                                         <label for="validationCustom01">Costo Mayoreo:</label>
                                         <input min=".1" type="number" step=".01" class="form-control" id="mayoreo" name="mayoreo" placeholder="Costo de Mayoreo" required>
                                     </div>
-                                    <div class="col-md-3 mb-3">
+                                    <div class="col-md-4 mb-3">
                                         <label for="validationCustom01">Marca:</label>
                                         <select class="custom-select" id="marca" name="marca" required>
                                             <?php require("../obtain/option_marcas.php"); ?>

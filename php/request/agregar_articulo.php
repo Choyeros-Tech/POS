@@ -6,20 +6,17 @@ $venta = $_POST['venta'];
 $compra = $_POST['compra'];
 $mayoreo = $_POST['mayoreo'];
 $marca = $_POST['marca'];
-
-$obtener= "SELECT id FROM inventario ORDER BY id DESC LIMIT 1 ";
-$resultado = mysqli_query($mysqli, $obtener) or die("<h2>Error de MySQL.</h2>". mysql_error());
-$row=mysqli_fetch_assoc($resultado);
-$consecutivo=$row["id"]+1;
+$cantidad = $_POST['cantidad'];
 
 
-$registrar = "INSERT INTO articulos(id, nombre, costo_venta, costo_mayoreo, costo_compra, marca) VALUES ('$consecutivo', '$nombre', '$venta', '$mayoreo', '$compra', '$marca')";
+$registrar = "INSERT INTO articulos(nombre, costo_venta, costo_mayoreo, costo_compra, marca) VALUES ('$nombre', '$venta', '$mayoreo', '$compra', '$marca')";
 $ejecutar = mysqli_query($mysqli, $registrar);
+
 if($ejecutar)
 {
-	$agregar_inventario = "INSERT INTO inventario(articulo) VALUES('$consecutivo')";
-	$res_inventario = mysqli_query($mysqli, $agregar_inventario);
-	if($res_inventario){
+	$registrarCantInv = "INSERT INTO inventario(articulo, cantidad) VALUES ('".mysqli_insert_id($mysqli)."', '$cantidad')";
+	$ejecutarInv = mysqli_query($mysqli, $registrarCantInv);
+	if($ejecutarInv){
 		echo json_encode(array('status'=>true,'message'=>'Articulo agregado correctamente'));
 	}else{
 		echo json_encode(array('status'=>false,'message'=>mysqli_error($mysqli)));
