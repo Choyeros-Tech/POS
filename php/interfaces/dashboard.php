@@ -144,6 +144,8 @@ require("../configuration/config.php");
                                 <div class="card-body">
                                     <div class="form-row">
                                         <div class="col-md-12 mb-12">
+                                            <label for="validationCustom01">Cliente:</label>
+                                            <br>
                                             <select class="form-control" id="cliente" name="cliente">
                                                 <?php require("../obtain/lista_clientes.php"); ?>
                                             </select>
