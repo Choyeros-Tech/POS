@@ -285,6 +285,7 @@ require("../configuration/config.php");
                                         <thead>
                                             <tr>
                                                 <th>Nombre</th>
+                                                <th>Codigo</th>
                                                 <th>Cantidad</th>
                                                 <th>Venta</th>
                                                 <th>Compra</th>

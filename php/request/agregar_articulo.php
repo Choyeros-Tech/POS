@@ -7,9 +7,10 @@ $compra = $_POST['compra'];
 $mayoreo = $_POST['mayoreo'];
 $marca = $_POST['marca'];
 $cantidad = $_POST['cantidad'];
+$codigo = $_POST['codigo'];
 
 
-$registrar = "INSERT INTO articulos(nombre, costo_venta, costo_mayoreo, costo_compra, marca) VALUES ('$nombre', '$venta', '$mayoreo', '$compra', '$marca')";
+$registrar = "INSERT INTO articulos(nombre, costo_venta, costo_mayoreo, costo_compra, marca, codigo) VALUES ('$nombre', '$venta', '$mayoreo', '$compra', '$marca','$codigo')";
 $ejecutar = mysqli_query($mysqli, $registrar);
 
 if($ejecutar)

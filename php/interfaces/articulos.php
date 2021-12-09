@@ -145,9 +145,13 @@ require("../configuration/config.php");
                             <br>
                             <form id="formArticulo" class="needs-validation" action="../request/agregar_articulo.php" method="POST">
                                 <div class="form-row">
-                                    <div class="col-md-12 mb-12">
+                                    <div class="col-md-10 mb-10">
                                         <label for="validationCustom01">Nombre:</label>
                                         <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Nombre del Artículo" required>
+                                    </div>
+                                    <div class="col-md-2 mb-2">
+                                        <label for="validationCustom01">Codigo:</label>
+                                        <input maxlength="45" type="text" name="codigo" id="codigo" class="form-control" required>
                                     </div>
                                 </div>
                                 <br>
@@ -205,6 +209,7 @@ require("../configuration/config.php");
                         <thead>
                             <tr>
                                 <th>Nombre</th>
+                                <th>Codigo</th>
                                 <th>C. Venta</th>
                                 <th>C. Mayoreo</th>
                                 <th>C. Compra</th>
