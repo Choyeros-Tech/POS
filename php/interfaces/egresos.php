@@ -222,7 +222,7 @@ require("../configuration/config.php");
                     <div class="form-row">
                         <div class="col-md-10 mb-10">
                             <label for="validationCustom01">Articulo:</label>
-                            <select class="selectpicker" data-live-search="true" name="articulo" id="articulo">
+                            <select class="selectpicker" data-live-search="true" onchange="getMaxCant(this)" name="articulo" id="articulo">
                                 <option selected disabled>Seleccione</option>
                                 <?php require("../obtain/articulos.php"); ?>
                             </select>
@@ -326,6 +326,21 @@ require("../configuration/config.php");
         }
         
     };
+    function getMaxCant(params) {
+        console.log(params.value)
+        axios.post('../request/getStockArticulo.php', 'idArticulo='+params.value)
+        .then(
+            resp => {
+                if (resp.data.status) {
+                    $('#egresArticulos #cantidad').prop('max',resp.data.message)
+                }
+            }
+        ).catch(error => {
+            if (error.response.status === 422) {
+                console.log(error);
+            }
+        })
+    }
     $("#egresArticulos").one('submit',function(event){
         event.preventDefault();
         if ($("#egresArticulos #proveedor").val() == null) {
