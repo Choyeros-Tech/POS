@@ -24,6 +24,9 @@ require("../configuration/config.php");
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.2.3/css/responsive.bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.2.3/css/responsive.jqueryui.min.css">
     <script src="../../assets/js/vendor/modernizr-2.8.3.min.js"></script>
+    <style>
+        label.error { float: none; color: red; padding-left: .5em; vertical-align: middle; font-size: 12px; }
+    </style>
 </head>
 
 <body>
@@ -62,9 +65,6 @@ require("../configuration/config.php");
                                 </li>
                                 <li>
                                     <a href="proveedores.php" aria-expanded="true"><i class="ti-truck"></i><span>Proveedores</span></a>
-                                </li>
-                                <li>
-                                    <a href="articulos.php" aria-expanded="true"><i class="ti-list"></i><span>Articulos</span></a>
                                 </li>
                                 <li class="active">
                                     <a href="inventarios.php" aria-expanded="true"><i class="ti-package"></i><span>Inventarios</span></a>
@@ -299,13 +299,126 @@ require("../configuration/config.php");
                                     </table>
                                 </div>
                                     
-
+                                    <button class="btn btn-success pull-right" data-toggle="modal" data-target="#addArticulos">Agregar artículo</button>
+                                    <button class="btn btn-danger pull-right" data-toggle="modal" data-target="#listaMarcas">Marcas</button>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                 </div>
+            </div>
+        </div>
+        <!-- Modal Articulos -->
+        <div id="addArticulos" class="modal fade" role="dialog">
+            <div class="modal-dialog modal-lg">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header" style="float: right;">
+                        <h4 class="modal-title">Agregar Articulos</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-xl-12 col-lg-12">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <h4 class="header-title mb-0">Registro de Artículos</h4>
+                                        </div>
+                                        <br>
+                                        <form id="formArticulo" class="needs-validation" action="../request/agregar_articulo.php" method="POST">
+                                            <div class="form-row">
+                                                <div class="col-md-10 mb-10">
+                                                    <label for="validationCustom01">Nombre:</label>
+                                                    <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Nombre del Artículo" required>
+                                                </div>
+                                                <div class="col-md-2 mb-2">
+                                                    <label for="validationCustom01">Codigo:</label>
+                                                    <input maxlength="45" type="text" name="codigo" id="codigo" class="form-control" required>
+                                                </div>
+                                            </div>
+                                            <br>
+                                            <div class="form-row align-items-baseline">
+                                                <div class="col-md-2 mb-3">
+                                                    <label for="validationCustom01">Cantidad de producto:</label>
+                                                    <input min="1" type="number" class="form-control" id="cantidad" name="cantidad" placeholder="Cantidad del producto" required>
+                                                </div>
+                                                <div class="col-md-2 mb-3">
+                                                    <label for="validationCustom01">Costo Venta:</label>
+                                                    <input min=".1" type="number" step=".01" class="form-control" id="venta" name="venta" placeholder="Costo de Venta" required>
+                                                </div>
+                                                <div class="col-md-2 mb-3">
+                                                    <label for="validationCustom01">Costo Compra:</label>
+                                                    <input min=".1" type="number" step=".01" class="form-control" id="compra" name="compra" placeholder="Costo de Compra" required>
+                                                </div>
+                                                <div class="col-md-2 mb-3">
+                                                    <label for="validationCustom01">Costo Mayoreo:</label>
+                                                    <input min=".1" type="number" step=".01" class="form-control" id="mayoreo" name="mayoreo" placeholder="Costo de Mayoreo" required>
+                                                </div>
+                                                <div class="col-md-4 mb-3">
+                                                    <label for="validationCustom01">Marca:</label>
+                                                    <select class="custom-select" id="marca" name="marca" required>
+                                                        <?php require("../obtain/option_marcas.php"); ?>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <br>
+                                            <button class="btn btn-primary pull-right" onclick="sendArticle()" type="button">Registrar</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <!-- Modal Marcas-->
+        <div id="listaMarcas" class="modal fade" role="dialog">
+            <div class="modal-dialog modal-lg">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header" style="float: right;">
+                        <h4 class="modal-title">Marcas</h4>
+                        <button type="button" class="close" data-dismiss="modal" onclick="addMarca(false)">&times;</button>
+
+                    </div>
+                    <div class="modal-body">
+                        <div class="data-tables" id="marcasdiv">
+                            <table id="tablamarcas" class="text-center" style="width: 100%;">
+                                <thead>
+                                    <tr>
+                                        <th>Nombre</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php require("../obtain/marcas.php");?>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div id="marcasagregar" style="display: none;">
+                            <div class="form-row">
+                                <div class="col-md-12 mb-12">
+                                    <form action="../request/guardar_marca.php" method="POST">
+                                    <label for="validationCustom01">Nombre:</label>
+                                    <input type="text"  class="form-control" id="nombre" name="nombre" placeholder="Nombre de la marca" required="">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-success pull-right" type="submit" style="display: none;" id="agregarbtn">Agregar</button>
+                        </form>
+                        <button class="btn btn-danger pull-right" id="cancelarmarca" style="display: none;" onclick="addMarca(false)">Cancelar</button>
+                        <button class="btn btn-danger pull-right" id="agregarmarca" onclick="addMarca(true)">Agregar</button>
+                    </div>
+                </div>
+
             </div>
         </div>
         <script src="../../assets/js/vendor/jquery-2.2.4.min.js"></script>
@@ -336,17 +449,87 @@ require("../configuration/config.php");
     <script src="https://cdn.datatables.net/responsive/2.2.3/js/responsive.bootstrap.min.js"></script>
     <script src="../../assets/js/plugins.js"></script>
     <script src="../../assets/js/scripts.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/jquery.validate.min.js"></script>
+    <script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.10.0/localization/messages_es.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.24.0/axios.min.js" integrity="sha512-u9akINsQsAkG9xjc1cnGF4zw5TFDwkxuc9vUp5dltDWYCSmyd0meygbvgXrlc/z7/o4a19Fb5V0OUE58J7dcyw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    
     <script type="text/javascript">
-        $('#tablaarticulos').DataTable( {
-    responsive: true
-} );
+        $( document ).ready(function() {
+            articulos = $('#tablaarticulos').DataTable({
+                responsive: true,
+                "language": {
+                    url: '../../assets/plugins/spanishDataTable.json'
+                }
+            });
+            $('#tablaarticulosModal').DataTable( {
+                responsive: true,
+                "language": {
+                    url: '../../assets/plugins/spanishDataTable.json'
+                }
+            } );
+            $('#tablamarcas').DataTable( {
+                responsive: true,
+                "language": {
+                    url: '../../assets/plugins/spanishDataTable.json'
+                }
+            } );
+        });
+        function addMarca(check) {
+            if (check) {
+                $("#marcasdiv").css('display', 'none');
+                $("#marcasagregar").css('display', 'block');
+                $("#agregarbtn").css('display', 'block');
+                $("#cancelarmarca").css('display', 'block');
+                $("#agregarmarca").css('display', 'none');
+            }else{
+                $("#marcasdiv").css('display', 'block');
+                $("#marcasagregar").css('display', 'none');
+                $("#cancelarmarca").css('display', 'none');
+                $("#agregarbtn").css('display', 'none');
+                $("#agregarmarca").css('display', 'block');
+            }
+        };
+        
+        
+
+        function alert(title,text,tipo) {
+            Swal.fire({
+                icon: tipo,
+                title: title,
+                text: text,
+            })
+        }
+        function sendArticle() {
+            // $("#egreEfect").valid();
+            if ($("#formArticulo").valid()) {
+                axios.post('../request/agregar_articulo.php', $('#formArticulo').serialize())
+                .then(
+                    resp => {
+                        alert(((resp.data.status)?'Guardado correcto':'Error al guardar'),`${resp.data.message}`,((resp.data.status)?'success':'error'))
+                        if (resp.data.status) {
+                            articulos.row.add( [
+                                $("#nombre").val(),
+                                $("#codigo").val(),
+                                $("#cantidad").val(),
+                                $("#venta").val(),
+                                $("#compra").val(),
+                                $("#mayoreo").val(),
+                                $("#marca option:selected").text()
+                            ] ).draw( false );
+                            $("#formArticulo")[0].reset();
+                            $("#addArticulos").modal('hide');
+                        }
+                    }
+                ).catch(error => {
+                    if (error.response.status === 422) {
+                        console.log(error);
+                    }
+                })
+            }
+            
+        };
     </script>
-    <?php
-if(isset($_GET['registrado']))
-{
-    echo '<script>swal("Registrado!", "Lo podrás ver en tu lista!", "success");</script>';
-}
-?>
     </body>
 
     </html>

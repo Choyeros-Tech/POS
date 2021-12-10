@@ -12,7 +12,7 @@ if($ejecutar)
 		echo '<td>'.$proveedores[2].'</td>';
 		echo '<td>'.$proveedores[3].'</td>';
 		echo '<td>'.$proveedores[4].'</td>';
-		echo '<tr>';
+		echo '</tr>';
 	}
 }
 else

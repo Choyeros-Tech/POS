@@ -67,9 +67,6 @@ require("../configuration/config.php");
                             <a href="proveedores.php" aria-expanded="true"><i class="ti-truck"></i><span>Proveedores</span></a>
                         </li>
                         <li>
-                            <a href="articulos.php" aria-expanded="true"><i class="ti-list"></i><span>Articulos</span></a>
-                        </li>
-                        <li>
                             <a href="inventarios.php" aria-expanded="true"><i class="ti-package"></i><span>Inventarios</span></a>
                         </li>
                         <li>
@@ -241,7 +238,10 @@ require("../configuration/config.php");
 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.24.0/axios.min.js" integrity="sha512-u9akINsQsAkG9xjc1cnGF4zw5TFDwkxuc9vUp5dltDWYCSmyd0meygbvgXrlc/z7/o4a19Fb5V0OUE58J7dcyw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script type="text/javascript">
     $('#tablaproveedores').DataTable( {
-        responsive: true
+        responsive: true,
+        "language": {
+            url: '../../assets/plugins/spanishDataTable.json'
+        }
     } );
     function alert(title,text,tipo) {
         Swal.fire({

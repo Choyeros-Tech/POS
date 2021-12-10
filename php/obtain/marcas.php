@@ -7,7 +7,7 @@ if($ejecutar)
 {
 	while($marcas = mysqli_fetch_row($ejecutar))
 	{
-		echo '<li>'.$marcas[1].'</li>';
+		echo '<tr><td>'.$marcas[1].'</td></tr>';
 	}
 }
 

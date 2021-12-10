@@ -12,7 +12,7 @@ if($ejecutar)
 		echo '<td>'.$cliente[2].'</td>';
 		echo '<td>'.$cliente[3].'</td>';
 		echo '<td>'.$cliente[4].'</td>';
-		echo '<tr>';
+		echo '</tr>';
 	}
 }
 

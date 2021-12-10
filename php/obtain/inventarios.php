@@ -5,8 +5,7 @@ $consulta = "SELECT a.nombre, a.codigo, i.cantidad, a.costo_venta, a.costo_mayor
 $ejecutar = mysqli_query($mysqli, $consulta);
 if($ejecutar)
 {
-	while($articulo = mysqli_fetch_row($ejecutar))
-	{
+	while($articulo = mysqli_fetch_row($ejecutar)){
 		echo '<tr>';
 		echo '<td>'.$articulo[0].'</td>';
 		echo '<td>'.$articulo[1].'</td>';
@@ -15,7 +14,7 @@ if($ejecutar)
 		echo '<td>$'.$articulo[4].'</td>';
 		echo '<td>$'.$articulo[5].'</td>';
 		echo '<td>'.$articulo[6].'</td>';
-		echo '<tr>';
+		echo '</tr>';
 	}
 }
 

@@ -79,9 +79,6 @@ require("../obtain/graficas.php");
                             <a href="proveedores.php" aria-expanded="true"><i class="ti-truck"></i><span>Proveedores</span></a>
                         </li>
                         <li>
-                            <a href="articulos.php" aria-expanded="true"><i class="ti-list"></i><span>Articulos</span></a>
-                        </li>
-                        <li>
                             <a href="inventarios.php" aria-expanded="true"><i class="ti-package"></i><span>Inventarios</span></a>
                         </li>
                         <li class="active">
