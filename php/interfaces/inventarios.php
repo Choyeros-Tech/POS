@@ -291,6 +291,7 @@ require("../configuration/config.php");
                                                 <th>Compra</th>
                                                 <th>Mayoreo</th>
                                                 <th>Marca</th>
+                                                <th>Opciones</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -299,7 +300,7 @@ require("../configuration/config.php");
                                     </table>
                                 </div>
                                     
-                                    <button class="btn btn-success pull-right" data-toggle="modal" data-target="#addArticulos">Agregar artículo</button>
+                                    <button class="btn btn-success pull-right" data-toggle="modal" data-target="#addArticulos" onclick="script:$('#formArticulo')[0].reset();">Agregar artículo</button>
                                     <button class="btn btn-danger pull-right" data-toggle="modal" data-target="#listaMarcas">Marcas</button>
                                 </div>
                             </div>
@@ -366,7 +367,8 @@ require("../configuration/config.php");
                                                 </div>
                                             </div>
                                             <br>
-                                            <button class="btn btn-primary pull-right" onclick="sendArticle()" type="button">Registrar</button>
+                                            <button id="buttonSendRegist" class="btn btn-primary pull-right" onclick="sendArticle()" type="button" >Registrar</button>
+                                            <button id="buttonSendEdit" class="btn btn-primary pull-right" onclick="updateArticle(this)" type="button" style="display: none;">Guardar</button>
                                         </form>
                                     </div>
                                 </div>
@@ -529,6 +531,52 @@ require("../configuration/config.php");
             }
             
         };
+        function edit(params) {
+            $("#addArticulos").modal('show');
+            $("#buttonSendEdit").show();
+            $("#buttonSendEdit").attr('idArt',params);
+            $("#buttonSendRegist").hide();
+
+            axios.post('../request/get_articulo.php', 'id='+params)
+            .then(
+                resp => {
+                    $("#nombre").val(resp.data.message.nombre)
+                    $("#codigo").val(resp.data.message.codigo)
+                    $("#cantidad").val(resp.data.message.cantidad)
+                    $("#venta").val(resp.data.message.costo_venta)
+                    $("#compra").val(resp.data.message.costo_compra)
+                    $("#mayoreo").val(resp.data.message.costo_mayoreo)
+                    $("#marca").val(resp.data.message.marca)
+                    
+                }
+            ).catch(error => {
+                if (error.response.status === 422) {
+                    console.log(error);
+                }
+            })
+        }
+        function updateArticle(params) {
+
+            let datos= $("#formArticulo").serialize()
+            datos += "&idArt="+$(params).attr('idArt');
+            axios.post('../request/update_articulo.php', datos)
+            .then(
+                resp => {
+                    Swal.fire({
+                        icon: ((resp.data.status)?'success':'error'),
+                        title: ((resp.data.status)?'Guardado correcto':'Error al guardar'),
+                        text: `${resp.data.message}`,
+                    }).then((result) => {
+                        location.reload();
+                    })
+                }
+            ).catch(error => {
+                if (error.response.status === 422) {
+                    console.log(error);
+                }
+            })
+            
+        }
     </script>
     </body>
 
