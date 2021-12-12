@@ -21,6 +21,9 @@ require("../configuration/config.php");
     <link rel="stylesheet" href="../../assets/css/responsive.css">
     <link rel="stylesheet" href="../../assets/css/bootstrap-select.css">
     <script src="../../assets/js/vendor/modernizr-2.8.3.min.js"></script>
+    <style>
+        label.error { float: none; color: red; padding-left: .5em; vertical-align: middle; font-size: 12px; }
+    </style>
 </head>
 
 <body>
@@ -243,17 +246,17 @@ require("../configuration/config.php");
 
             </div>
             <div class="modal-body">
-                <form class="needs-validation" action="../request/agregar_ingreso.php" method="POST">
+                <form class="needs-validation" id="efectivoForm" method="POST">
                     <div class="form-row">
                         <div class="col-md-11 mb-11">
                             <label for="validationCustom01">Cantidad:</label>
-                            <input type="number" step="0.01" class="form-control" id="cantidad" name="cantidad" placeholder="Cantidad Exacta Que Ingresa a Caja" required="">
+                            <input min=".01" type="number" step="0.01" class="form-control" id="cantidad" name="cantidad" placeholder="Cantidad Exacta Que Ingresa a Caja" required="">
                             <input type="hidden" name="tipo" value="Fondo de Caja">
                             <input type="hidden" name="inicial" value="true">
                         </div>
                         <div class="col-md-1 mb-1">
                             <label for="validationCustom01">.</label>
-                             <button class="btn btn-primary pull-right" type="submit">Registrar</button>
+                             <button class="btn btn-primary pull-right" type="button" onclick="ingresoEfect()">Registrar</button>
                         </div>
                     </div>
                    
@@ -351,10 +354,32 @@ require("../configuration/config.php");
 <script src="../../assets/js/plugins.js"></script>
 <script src="../../assets/js/scripts.js"></script>
 <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/jquery.validate.min.js"></script>
+<script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.10.0/localization/messages_es.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.24.0/axios.min.js" integrity="sha512-u9akINsQsAkG9xjc1cnGF4zw5TFDwkxuc9vUp5dltDWYCSmyd0meygbvgXrlc/z7/o4a19Fb5V0OUE58J7dcyw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script type="text/javascript">
     var elementos = new Array();
     var elementos_visuales = new Array();
     var contador = 0;
+    function ingresoEfect() {
+        if ($("#efectivoForm").valid()) {
+            axios.post('../request/agregar_ingreso.php', $('#efectivoForm').serialize())
+            .then(
+                resp => {
+                    alert(((resp.data.status)?'Guardado correcto':'Error al guardar'),`${resp.data.message}`,((resp.data.status)?'success':'error'))
+                    if (resp.data.status) {
+                        $("#efectivoForm")[0].reset();
+                        $('#modalfondo').modal('hide');
+                    }
+                }
+            ).catch(error => {
+                if (error.response.status === 422) {
+                    console.log(error);
+                }
+            })
+        }
+        
+    };
     function alert(title,text,tipo) {
         Swal.fire({
             icon: tipo,
@@ -599,12 +624,6 @@ if($validar_fondo_caja)
 
 ?>
 
-<?php
-if(isset($_GET['registrado']))
-{
-    echo '<script>swal("Registrado!", "Lo podrás ver en tu lista!", "success");</script>';
-}
-?>
 
 </body>
 

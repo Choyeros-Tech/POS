@@ -4,14 +4,18 @@ require("../connections/connection.php");
 
 $cantidad = $_POST['cantidad'];
 $tipo = $_POST['tipo'];
-$otro = $_POST['otro'];
+$otro = (isset($_POST['otro'])?$_POST['otro']:'');
 $fecha = date("Y-m-d");
 $hora = date("H:i:s");
 
 $obtener= "SELECT id FROM efectivo ORDER BY id DESC LIMIT 1 ";
 $resultado = mysqli_query($mysqli, $obtener) or die("<h2>Error de MySQL.</h2>". mysql_error());
-$row=mysqli_fetch_assoc($resultado);
-$consecutivo=$row["id"]+1;
+if (mysqli_num_rows($resultado)>0) {
+	$row=mysqli_fetch_assoc($resultado);
+	$consecutivo=$row["id"]+1;
+}else {
+	$consecutivo=1;
+}
 
 
 
