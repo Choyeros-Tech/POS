@@ -238,43 +238,41 @@ require("../obtain/graficas.php");
                                     <div id="articulosContainer" style="height: 100%; width: 100%;"></div>
                                 </div>
                                 <div class="col-md-6 mb-6">
-                                    <div id="ingresoscontainer" style="height: 100%; width: 100%;"></div>
+                                    <div id="articulosCircontainer" style="height: 100%; width: 100%;"></div>
                                 </div>
                             </div>
                             <div class="form-row mt-5" style="height: 600px;">
                                 <div class="col-md-6 mb-6">
                                     <div class="card-head d-flex justify-content-center">
-                                        <h2>Ingreso de efectivo por fecha</h2>
+                                        <h2>Ingreso de articulos por fecha</h2>
                                     </div>
                                     <div class="d-flex justify-content-center align-items-center">
-                                        <form id="formDateDinero" style="width: 100%;" action="">
+                                        <form id="formDateArticuloIngres" style="width: 100%;" action="">
                                             <div class="d-flex justify-content-center align-items-center">
-                                                <input class="form-control d-inline" style="width: 48%;" type="date" name="dateInicioDinero" id="dateInicio"><span style="margin: 0px 10px;">a</span>
-                                                <input class="form-control d-inline" style="width: 48%;" type="date" name="dateFinDinero" id="dateFin">
+                                                <input class="form-control d-inline" style="width: 48%;" type="date" name="dateInicioArticulo" id="dateInicio"><span style="margin: 0px 10px;">a</span>
+                                                <input class="form-control d-inline" style="width: 48%;" type="date" name="dateFinArticulo" id="dateFin">
                                             </div>
                                             <div>
                                                 <span>Tipo de busqueda: </span>
-                                                <select name="tipoEfectivo" id="tipoEfectivo" class="form-control" required="">
-                                                    <option>Fondo de Caja</option>
-                                                    <option>Recibo de Dinero</option>
-                                                    <option>Otro</option>
-                                                    <option>Todo</option>
+                                                <select class="selectpicker" data-live-search="true" name="tipoArticulo" id="tipoArticulo">
+                                                    <option selected disabled>Seleccione</option>
+                                                    <?php require("../obtain/articulos.php"); ?>
                                                 </select>
 
                                             </div>
                                         </form>
                                     </div>
                                     <div class="mt-2 mb-4">
-                                        <button class="form-control btn btn-primary" onclick="generarDateDinero()" type="button">GENERAR</button>
+                                        <button class="form-control btn btn-primary" onclick="generarDateArticuloIngreso()" type="button">GENERAR</button>
                                     </div>
-                                    <div id="ingresTipcontainer" style="height: 400px; width: 100%;"></div>
+                                    <div id="ingresTipcontainerArtIngres" style="height: 400px; width: 100%;"></div>
                                 </div>
                                 <div class="col-md-6 mb-6">
                                     <div class="card-head d-flex justify-content-center">
-                                        <h2>Ingreso de articulos por fecha</h2>
+                                        <h2>Egreso de articulos por fecha</h2>
                                     </div>
                                     <div class="d-flex justify-content-center align-items-center">
-                                        <form id="formDateArticulo" style="width: 100%;" action="">
+                                        <form id="formDateArticuloEgreso" style="width: 100%;" action="">
                                             <div class="d-flex justify-content-center align-items-center">
                                                 <input class="form-control d-inline" style="width: 48%;" type="date" name="dateInicioArticulo" id="dateInicioArticulo"><span style="margin: 0px 10px;">a</span>
                                                 <input class="form-control d-inline" style="width: 48%;" type="date" name="dateFinArticulo" id="dateFinArticulo">
@@ -290,9 +288,9 @@ require("../obtain/graficas.php");
                                         </form>
                                     </div>
                                     <div class="mt-2 mb-4">
-                                        <button class="form-control btn btn-primary" onclick="generarDateArticulo()" type="button">GENERAR</button>
+                                        <button class="form-control btn btn-primary" onclick="generarDateArticuloEgreso()" type="button">GENERAR</button>
                                     </div>
-                                    <div id="ingresTipArtcontainer" style="height: 400px; width: 100%;"></div>
+                                    <div id="egresoTipArtcontainer" style="height: 400px; width: 100%;"></div>
                                 </div>
                             </div>
                         </div>
@@ -361,7 +359,7 @@ var chart = new CanvasJS.Chart("articulosContainer", {
         text: "Ingresos y Egresos"
     },
     axisY: {
-        title: "Dinero en Caja"
+        title: "Articulos"
     },
     data: [{        
         type: "column",  
@@ -429,6 +427,23 @@ var visitorsData = {
         ]
     }]
 };
+var visitorsData2 = {
+    "Ingresos y Egresos": [{
+        cursor: "pointer",
+        explodeOnClick: false,
+        innerRadius: "75%",
+        legendMarkerType: "square",
+        name: "Ingresos y Egresos Articulos",
+        radius: "100%",
+        showInLegend: true,
+        startAngle: 90,
+        type: "doughnut",
+        dataPoints: [
+            { y: <?php echo $totalIngresosArticulos; ?>, name: "Ingresos", color: "#E7823A" },
+            { y: <?php echo $totalEgresoArticulos; ?>, name: "Egresos", color: "#546BC1" }
+        ]
+    }]
+};
 
 var newVSReturningVisitorsOptions = {
     animationEnabled: true,
@@ -441,6 +456,21 @@ var newVSReturningVisitorsOptions = {
         fontSize: 14,
         itemTextFormatter: function (e) {
             return e.dataPoint.name + ": " + Math.round(e.dataPoint.y / <?php echo $ingresos_egresos; ?> * 100) + "%";  
+        }
+    },
+    data: []
+};
+var cirArt = {
+    animationEnabled: true,
+    theme: "light2",
+    title: {
+        text: ""
+    },
+    legend: {
+        fontFamily: "calibri",
+        fontSize: 14,
+        itemTextFormatter: function (e) {
+            return e.dataPoint.name + ": " + Math.round(e.dataPoint.y / <?php echo $ingresos_egresosArt; ?> * 100) + "%";  
         }
     },
     data: []
@@ -468,6 +498,9 @@ var visitorsDrilldownedChartOptions = {
 var chart = new CanvasJS.Chart("ingresoscontainer", newVSReturningVisitorsOptions);
 chart.options.data = visitorsData["Ingresos y Egresos"];
 chart.render();
+var chart2 = new CanvasJS.Chart("articulosCircontainer", cirArt);
+chart2.options.data = visitorsData2["Ingresos y Egresos"];
+chart2.render();
 
 function visitorsChartDrilldownHandler(e) {
     chart = new CanvasJS.Chart("ingresoscontainer", visitorsDrilldownedChartOptions);
@@ -548,6 +581,82 @@ function generarDateArticulo(params) {
                 });
                 chartTip.render();
             }
+        }
+    ).catch(error => {
+        if (error.response.status === 422) {
+            console.log(error);
+        }
+    })
+    
+}
+function generarDateArticuloIngreso(params) {
+    axios.post('../request/getDateArticuloIngreso.php', $('#formDateArticuloIngres').serialize())
+    .then(
+        resp => {
+            if (!resp.data.status) {
+                alert(((resp.data.status)?'Guardado correcto':'Error'),`${resp.data.message}`,((resp.data.status)?'success':'error'))
+            }
+            let objetoDateArticulo = [];
+            if (resp.data.status) {
+                // $("#formDateArticuloIngres")[0].reset();
+
+                resp.data.message.forEach(element => {
+                    objetoDateArticulo.push({y:  parseInt(element.cantidad), label: element.fecha })
+                });
+            }
+            var ingresTipcontainerArtIngres = new CanvasJS.Chart("ingresTipcontainerArtIngres", {
+                animationEnabled: true,
+                theme: "light2", // "light1", "light2", "dark1", "dark2"
+                title:{
+                    text: ""
+                },
+                axisY: {
+                    title: "Articulos ingresado"
+                },
+                data: [{        
+                    type: "column",  
+                    legendMarkerColor: "grey",
+                    dataPoints: objetoDateArticulo
+                }]
+            });
+            ingresTipcontainerArtIngres.render();
+        }
+    ).catch(error => {
+        if (error.response.status === 422) {
+            console.log(error);
+        }
+    })
+    
+}
+function generarDateArticuloEgreso(params) {
+    axios.post('../request/generarDateArticuloEgreso.php', $('#formDateArticuloEgreso').serialize())
+    .then(
+        resp => {
+            if (!resp.data.status) {
+                alert(((resp.data.status)?'Guardado correcto':'Error'),`${resp.data.message}`,((resp.data.status)?'success':'error'))
+            }
+            let objetoDateArticulo = [];
+            if (resp.data.status) {
+                resp.data.message.forEach(element => {
+                    objetoDateArticulo.push({y:  parseInt(element.cantidad), label: element.fecha })
+                });
+            }
+            var chartTip = new CanvasJS.Chart("egresoTipArtcontainer", {
+                animationEnabled: true,
+                theme: "light2", // "light1", "light2", "dark1", "dark2"
+                title:{
+                    text: ""
+                },
+                axisY: {
+                    title: "Dinero en Caja"
+                },
+                data: [{        
+                    type: "column",  
+                    legendMarkerColor: "grey",
+                    dataPoints: objetoDateArticulo
+                }]
+            });
+            chartTip.render();
         }
     ).catch(error => {
         if (error.response.status === 422) {

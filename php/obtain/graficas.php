@@ -77,5 +77,6 @@ if($res_ingresos)
 
 $total_ventas = $total_ventas + $ingreso_dinero;
 $ingresos_egresos = $ingreso_dinero + $egreso_dinero;
+$ingresos_egresosArt = $totalEgresoArticulos + $totalIngresosArticulos;
 
 ?> 
