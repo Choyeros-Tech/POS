@@ -367,11 +367,8 @@ var chart = new CanvasJS.Chart("articulosContainer", {
         type: "column",  
         legendMarkerColor: "grey",
         dataPoints: [      
-            { y: <?php echo $total_ventas;?>, label: "Ingresos" },
-            { y: <?php echo $egreso_dinero;?>, label: "Egresos" },
-            //{ y: <?php //echo $egreso_dinero;?>, label: "Salidas" },
-           // { y: <?php //echo "0"?>, label: "En Caja" },
-           <?php echo $totales_por_usuario;?>
+            { y: <?php echo $totalIngresosArticulos;?>, label: "Ingresos" },
+            { y: <?php echo $totalEgresoArticulos;?>, label: "Egresos" },
         ]
     }]
 });

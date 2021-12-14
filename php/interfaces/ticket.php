@@ -30,12 +30,12 @@ $res_ticket = mysqli_query($mysqli, $datos_ticket);
             <div class="col-12">
                 <div class="container">
                     <div class="text-center">
+                        
                         <img src="../../assets/images/<?php echo $Logo; ?>" alt="Logotipo" style="height: 60px;max-height: 60px;width: 100px;max-width: 100px;">
                         <p class="centrado"><?php echo $Tienda; ?>
-                            <br><?php echo $Eslogan; ?>
-                            <br><?php echo $Direccion; ?>
-                            <br><?php $date = new DateTime(date('d/m/Y H:i:s'));
-                                echo $date->format('d/m/Y h:i:sa') ;?>
+                        <br><?php echo $Eslogan; ?>
+                        <br><?php echo $Direccion; ?>
+                        <br><?php $date = new DateTime(date('d-m-Y H:i:s')); echo $date->format('d/m/Y h:i:sa');?>
                         </p>
                     </div>
                     <div class="row">

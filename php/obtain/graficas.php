@@ -7,12 +7,35 @@ $hoy = date("Y-m-d");
 $query_ventas = "SELECT * FROM ventas WHERE fecha = '$hoy'";
 $res_ventas = mysqli_query($mysqli, $query_ventas);
 $total_ventas = 0;
+$totalEgresoArticulos = 0;
+$totalIngresosArticulos = 0;
 if($res_ventas)
 {
 	while($ventas = mysqli_fetch_assoc($res_ventas))
 	{
 		$cantidad = $ventas['precio'] * $ventas['cantidad'];
 		$total_ventas = $total_ventas + $cantidad;
+		$totalEgresoArticulos += $ventas['cantidad'];
+	}
+}
+$query_salidas = "SELECT * FROM salidas WHERE fecha = '$hoy'";
+$res_Salidas = mysqli_query($mysqli, $query_salidas);
+if($res_Salidas)
+{
+	while($salidas = mysqli_fetch_assoc($res_Salidas))
+	{
+		$totalEgresoArticulos += $salidas['cantidad'];
+
+	}
+}
+$query_entradas = "SELECT * FROM entradas WHERE fecha = '$hoy'";
+$res_entradas = mysqli_query($mysqli, $query_entradas);
+if($res_entradas)
+{
+	while($entradas = mysqli_fetch_assoc($res_entradas))
+	{
+		$totalIngresosArticulos += $entradas['cantidad'];
+
 	}
 }
 

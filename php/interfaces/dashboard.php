@@ -526,7 +526,7 @@ require("../configuration/config.php");
             alert('Oops...','Seleccione Un artículo','error')
             return true;
         }
-        if (dinero < 1 || cefectivo < 1 || ctarjeta < 1) {
+        if (parseInt(dinero) < 1 || parseInt(cefectivo) < 1 || parseInt(ctarjeta) < 1) {
             alert('Oops...','Cantidad no puede ser menos de 1','error')
             return true;
         }
