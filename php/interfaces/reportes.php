@@ -193,19 +193,19 @@ require("../obtain/graficas.php");
                                 </div>
                                 <div class="col-md-6 mb-6">
                                     <div class="card-head d-flex justify-content-center">
-                                        <h2>Ingreso de articulos por fecha</h2>
+                                        <h2>Egreso de efectivo por fecha</h2>
                                     </div>
                                     <div class="d-flex justify-content-center align-items-center">
                                         <form id="formDateArticulo" style="width: 100%;" action="">
                                             <div class="d-flex justify-content-center align-items-center">
-                                                <input class="form-control d-inline" style="width: 48%;" type="date" name="dateInicioArticulo" id="dateInicioArticulo"><span style="margin: 0px 10px;">a</span>
-                                                <input class="form-control d-inline" style="width: 48%;" type="date" name="dateFinArticulo" id="dateFinArticulo">
+                                                <input class="form-control d-inline" style="width: 48%;" type="date" name="dateInicioDinero" id="dateInicio"><span style="margin: 0px 10px;">a</span>
+                                                <input class="form-control d-inline" style="width: 48%;" type="date" name="dateFinDinero" id="dateFin">
                                             </div>
                                             <div>
                                                 <span>Tipo de busqueda: </span>
-                                                <select class="selectpicker" data-live-search="true" name="tipoArticulo" id="tipoArticulo">
-                                                    <option selected disabled>Seleccione</option>
-                                                    <?php require("../obtain/articulos.php"); ?>
+                                                <select name="tipoEfectivo" id="tipoEfectivo" class="form-control" required="">
+                                                    <option>Pago a Proveedor</option>
+                                                    <option>Otro</option>
                                                 </select>
 
                                             </div>
@@ -558,11 +558,11 @@ function generarDateArticulo(params) {
                 alert(((resp.data.status)?'Guardado correcto':'Error'),`${resp.data.message}`,((resp.data.status)?'success':'error'))
             }
             if (resp.data.status) {
-                // $("#formDateArticulo")[0].reset();
-                let objetoDateArticulo = [];
+                // $("#formDateDinero")[0].reset();
+                let objetoDateDinero = [];
 
                 resp.data.message.forEach(element => {
-                    objetoDateArticulo.push({y:  parseInt(element.cantidad), label: element.fecha })
+                    objetoDateDinero.push({y:  parseInt(element.efectivo), label: element.fecha })
                 });
                 var chartTip = new CanvasJS.Chart("ingresTipArtcontainer", {
                     animationEnabled: true,
@@ -576,7 +576,7 @@ function generarDateArticulo(params) {
                     data: [{        
                         type: "column",  
                         legendMarkerColor: "grey",
-                        dataPoints: objetoDateArticulo
+                        dataPoints: objetoDateDinero
                     }]
                 });
                 chartTip.render();
@@ -589,6 +589,45 @@ function generarDateArticulo(params) {
     })
     
 }
+// function generarDateArticulo(params) {
+//     axios.post('../request/getDateArticulo.php', $('#formDateArticulo').serialize())
+//     .then(
+//         resp => {
+//             if (!resp.data.status) {
+//                 alert(((resp.data.status)?'Guardado correcto':'Error'),`${resp.data.message}`,((resp.data.status)?'success':'error'))
+//             }
+//             if (resp.data.status) {
+//                 // $("#formDateArticulo")[0].reset();
+//                 let objetoDateArticulo = [];
+
+//                 resp.data.message.forEach(element => {
+//                     objetoDateArticulo.push({y:  parseInt(element.cantidad), label: element.fecha })
+//                 });
+//                 var chartTip = new CanvasJS.Chart("ingresTipArtcontainer", {
+//                     animationEnabled: true,
+//                     theme: "light2", // "light1", "light2", "dark1", "dark2"
+//                     title:{
+//                         text: ""
+//                     },
+//                     axisY: {
+//                         title: "Dinero en Caja"
+//                     },
+//                     data: [{        
+//                         type: "column",  
+//                         legendMarkerColor: "grey",
+//                         dataPoints: objetoDateArticulo
+//                     }]
+//                 });
+//                 chartTip.render();
+//             }
+//         }
+//     ).catch(error => {
+//         if (error.response.status === 422) {
+//             console.log(error);
+//         }
+//     })
+    
+// }
 function generarDateArticuloIngreso(params) {
     axios.post('../request/getDateArticuloIngreso.php', $('#formDateArticuloIngres').serialize())
     .then(
