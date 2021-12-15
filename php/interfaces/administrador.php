@@ -23,6 +23,9 @@ require("../obtain/graficas.php");
     <link rel="stylesheet" href="../../assets/css/bootstrap-select.css">
     <link rel="stylesheet" href="../../assets/css/sweetalert2.min.css">
     <script src="../../assets/js/vendor/modernizr-2.8.3.min.js"></script>
+    <style>
+    label.error { float: none; color: red; padding-left: .5em; vertical-align: middle; font-size: 12px; }
+</style>
 </head>
 
 <body>
@@ -112,6 +115,9 @@ require("../obtain/graficas.php");
                 <div class="col-sm-6">
                     <div class="breadcrumbs-area clearfix">
                         <h4 class="page-title pull-left">Administrador</h4>
+                        <?php if ($_SESSION['nivel'] == 1) {?>
+                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addUser">Crear Usario</button>
+                        <?php } ?>
                     </div>
                 </div>
                 <div class="col-sm-6 clearfix">
@@ -276,7 +282,66 @@ require("../obtain/graficas.php");
         </div>
     </div>
 </div>
+<div id="addUser" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg">
 
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header" style="float: right;">
+                <h4 class="modal-title">Crear Usuario</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+
+            </div>
+            <div class="modal-body">
+                <form id="formArticulo" class="needs-validation" action="../request/agregar_articulo.php" method="POST">
+                    <div class="form-row">
+                        <div class="col-md-12 mb-12">
+                            <label for="validationCustom01">Nombre:</label>
+                            <input maxlength="150" type="text" class="form-control" id="nombre" name="nombre" required>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="form-row">
+                        <div class="col-md-6 mb-6">
+                            <label for="validationCustom01">Usuario:</label>
+                            <input maxlength="50" type="text" name="usuario" id="usuario" class="form-control" required>
+                        </div>
+                        <div class="col-md-6 mb-6">
+                            <label for="validationCustom01">Contraseña:</label>
+                            <input maxlength="32" type="password" class="form-control" id="password" name="password" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-4 mb-4">
+                            <label for="validationCustom01">Dirección:</label>
+                            <input maxlength="50" type="text" name="direccion" id="direccion" class="form-control" required>
+                        </div>
+                        <div class="col-md-4 mb-4">
+                            <label for="validationCustom01">Telefono:</label>
+                            <input maxlength="10" type="number" class="form-control" id="telefono" name="telefono" required>
+                        </div>
+                        <div class="col-md-4 mb-4">
+                            <label for="validationCustom01">Correo:</label>
+                            <input maxlength="150" type="email" name="correo" id="correo" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12 mb-12">
+                            <label for="validationCustom01">Tipo empleado:</label>
+                            <select class="form-control" name="nivel" id="">
+                                <option value="1">Administrador</option>
+                                <option value="2">Cajero</option>
+                            </select>
+                        </div>
+                    </div>
+                    <br>
+                    <button class="btn btn-primary pull-right" onclick="addUser()" type="button">Registrar</button>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
 
 <script src="../../assets/js/vendor/jquery-2.2.4.min.js"></script>
 <script src="../../assets/js/popper.min.js"></script>
@@ -293,6 +358,41 @@ require("../obtain/graficas.php");
 <script src="../../assets/js/plugins.js"></script>
 <script src="../../assets/js/scripts.js"></script>
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/jquery.validate.min.js"></script>
+<script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.10.0/localization/messages_es.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.24.0/axios.min.js" integrity="sha512-u9akINsQsAkG9xjc1cnGF4zw5TFDwkxuc9vUp5dltDWYCSmyd0meygbvgXrlc/z7/o4a19Fb5V0OUE58J7dcyw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+<script>
+    function alert(title,text,tipo) {
+        Swal.fire({
+            icon: tipo,
+            title: title,
+            text: text,
+        })
+    }
+    function addUser() {
+        // $("#egreEfect").valid();
+        if ($("#formArticulo").valid()) {
+            axios.post('../request/addUser.php', $('#formArticulo').serialize())
+            .then(
+                resp => {
+                    alert(((resp.data.status)?'Guardado correcto':'Error al guardar'),`${resp.data.message}`,((resp.data.status)?'success':'error'))
+                    if (resp.data.status) {
+                        $("#formArticulo")[0].reset();
+                        $('#addUser').modal('hide');
+                    }
+                }
+            ).catch(error => {
+                if (error.response.status === 422) {
+                    console.log(error);
+                }
+            })
+        }
+        
+    };
+</script>
 
 <?php
 if(isset($_GET['registrado']))

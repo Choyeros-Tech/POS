@@ -10,7 +10,7 @@ if($resultado)
 {
 	if(mysqli_num_rows($resultado) == 1)
 	{
-		$sql_n = "SELECT nivel, nombre, usuario, id from usuarios WHERE usuario = '$usuario' AND password = '$password'";
+		$sql_n = "SELECT nivel, nombre, usuario, id, id_negocio from usuarios WHERE usuario = '$usuario' AND password = '$password'";
 		$res_n = mysqli_query($admin, $sql_n);
 		if(!$res_n)
 		  {
@@ -26,6 +26,7 @@ if($resultado)
 	          $_SESSION['nombre'] = $row[1];
 	          $_SESSION['usuario'] = $row[2];
 	          $_SESSION['id_usuario'] = $row[3];
+	          $_SESSION['id_negocio'] = $row[3];
 	        }
 	        echo "<script>location.href='../interfaces/dashboard.php'</script>";
 		  }
