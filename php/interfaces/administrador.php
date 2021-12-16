@@ -239,11 +239,22 @@ require("../obtain/graficas.php");
                             <div class="form-row">
                                     <div class="col-md-11 mb-11">
                                         <form action="../request/generar_corte.php" method="POST" target="_blank">
-                                        <label for="validationCustom01">Empleado:</label>
-                                        <select name="empleado" id="empleado" class="form-control">
-                                            <option selected disabled>Seleccione</option>
-                                            <?php require("../obtain/empleados.php");?>
-                                        </select>
+                                            <div class="row">
+                                                <div class="col-lg-6">
+                                                    <label for="validationCustom01">Tipo de corte:</label>
+                                                    <select name="tipo" class="form-control" id="" onchange="checkOption(this)">
+                                                        <option value="1">Empleado</option>
+                                                        <option value="2">Del Dia</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-lg-6" id="divUser">
+                                                    <label for="validationCustom01">Empleado:</label>
+                                                    <select name="empleado" id="empleado" class="form-control">
+                                                        <option selected disabled>Seleccione</option>
+                                                        <?php require("../obtain/empleados.php");?>
+                                                    </select>
+                                                </div>
+                                            </div>
                                     </div>
                                     <div class="col-md-1 mb-1">
                                         <label for="validationCustom01">.</label><br>
@@ -371,6 +382,17 @@ require("../obtain/graficas.php");
             title: title,
             text: text,
         })
+    }
+    function checkOption(params) {
+        if($(params).val() == 2){
+            $('#divUser').hide();
+            $('#empleado').attr('hidden');
+        }else{
+            $('#divUser').show();
+            $('#empleado').attr('hidden');
+        }
+        
+        
     }
     function addUser() {
         // $("#egreEfect").valid();

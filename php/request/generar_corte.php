@@ -2,7 +2,7 @@
 require("../connections/connection.php");
 require("../../assets/plugins/fpdf/fpdf.php");
 
-$empleado = $_POST['empleado'];
+$empleado = (isset($_POST['empleado'])?$_POST['empleado']:'dia');
 $hoy = date("Y-m-d");
 
 class PDF extends FPDF
@@ -12,7 +12,7 @@ class PDF extends FPDF
 			$this->Image('../../assets/images/logo.jpg', 55, 5, 100 );
 			$this->SetFont('Arial','B',15);
 			$this->Cell(40);
-			$this->Cell(120,30, 'CORTE DEL DIA',0,0,'C');
+			$this->Cell(120,30, 'CORTE DE'.((isset($_POST['empleado']))?' '.$_POST['empleado']:'L DIA'),0,0,'C');
 			$this->Ln(20);
 		}
 		
@@ -25,8 +25,9 @@ class PDF extends FPDF
 	}
 
 	//$query = "SELECT e.estado, m.id_municipio, m.municipio FROM t_municipio AS m INNER JOIN t_estado AS e ON m.id_estado=e.id_estado";
-	$query = "SELECT a.nombre as articulo, v.cantidad as cantidad, v.precio as precio, v.hora as hora, v.fecha FROM ventas v INNER JOIN articulos a ON a.id = v.articulo WHERE v.empleado = '$empleado' AND v.fecha = '$hoy' AND v.activo = '0'";
+	$query = "SELECT a.nombre as articulo, v.cantidad as cantidad, v.precio as precio, v.hora as hora, v.fecha FROM ventas v INNER JOIN articulos a ON a.id = v.articulo WHERE ".(($empleado != 'dia')?'v.empleado = "'.$empleado.'" AND':'')." v.fecha = '$hoy' AND v.activo = '0'";
 	$resultado = $mysqli->query($query);
+	
 	
 	$pdf = new PDF();
 	$pdf->AliasNbPages();
@@ -67,7 +68,7 @@ class PDF extends FPDF
 
 	$pdf->SetFont('Arial','',10);
 
-	$query_ingresos = "SELECT * FROM efectivo WHERE eos = 'entrada' AND fecha = '$hoy'";
+	$query_ingresos = "SELECT * FROM efectivo WHERE eos = 'entrada' ".(($empleado != 'dia')?'AND usuario="'.$empleado.'"':'')." AND fecha = '$hoy'";
 	$resultados_ingresos = $mysqli->query($query_ingresos);
 
 	while($row = $resultados_ingresos->fetch_assoc())
@@ -91,7 +92,7 @@ class PDF extends FPDF
 
 	$pdf->SetFont('Arial','',10);
 
-	$query_ingresos = "SELECT * FROM efectivo WHERE eos = 'salida' AND fecha = '$hoy'";
+	$query_ingresos = "SELECT * FROM efectivo WHERE eos = 'salida' ".(($empleado != 'dia')?'AND usuario="'.$empleado.'"':'')." AND fecha = '$hoy'";
 	$resultados_ingresos = $mysqli->query($query_ingresos);
 
 	while($row = $resultados_ingresos->fetch_assoc())
