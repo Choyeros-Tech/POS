@@ -4,8 +4,9 @@ require("../configuration/config.php");
 require("../connections/connection.php");
 
 $ticket = base64_decode($_GET['ticket']);
-$datos_ticket = "SELECT v.cantidad as cantidad, v.precio as precio, a.nombre as articulo FROM ventas v INNER JOIN articulos a ON a.id = v.articulo  WHERE id_venta = '$ticket'";
-$res_ticket = mysqli_query($mysqli, $datos_ticket);
+$cambio = (($_GET['cambio'])?$_GET['cambio']:'0');
+$datos_ticket = "SELECT v.cantidad as cantidad, v.empleado as empleado, v.precio as precio, a.nombre as articulo FROM ventas v INNER JOIN articulos a ON a.id = v.articulo  WHERE id_venta = '$ticket'";
+$res_ticket = mysqli_query($mysqli, $datos_ticket)->fetch_all(MYSQLI_ASSOC);
 ?>
 <!DOCTYPE html>
 <html>
@@ -39,6 +40,9 @@ $res_ticket = mysqli_query($mysqli, $datos_ticket);
                         </p>
                     </div>
                     <div class="row">
+                        <div class="w-100">
+                            <p class="d-flex justify-content-center">Cajero: <?php echo $res_ticket[0]['empleado']; ?></p>
+                        </div>
                         <table class="w-100">
                             <thead>
                                 <tr>
@@ -52,15 +56,14 @@ $res_ticket = mysqli_query($mysqli, $datos_ticket);
                                     if($res_ticket)
                                     {
                                         $total_ticket = 0;
-                                        while($datos = mysqli_fetch_assoc($res_ticket))
-                                        {
+                                        foreach ($res_ticket as $key) {
                                             echo '<tr>';
-                                            echo '<td class="cantidad">'.$datos['cantidad'].'</td>';
-                                            echo '<td class="articulo">'.$datos['articulo'].'</td>';
-                                            echo '<td class="precio">$'.$datos['precio'].'</td>';
+                                            echo '<td class="cantidad">'.$key['cantidad'].'</td>';
+                                            echo '<td class="articulo">'.$key['articulo'].'</td>';
+                                            echo '<td class="precio">$'.$key['precio'].'</td>';
                                             echo '</tr>';
                 
-                                            $total_ticket = $datos['cantidad'] * $datos['precio'];
+                                            $total_ticket += $key['cantidad'] * $key['precio'];
                                         }
                 
                                     }
@@ -74,6 +77,11 @@ $res_ticket = mysqli_query($mysqli, $datos_ticket);
                                     <td class="cantidad">Total</td>
                                     <td class="articulo"></td>
                                     <td class="precio">$<?php echo $total_ticket; ?></td>
+                                </tr>
+                                <tr>
+                                    <td class="cantidad">Cambio</td>
+                                    <td class="articulo"></td>
+                                    <td class="precio">$<?php echo $cambio; ?></td>
                                 </tr>
                             </tbody>
                         </table>

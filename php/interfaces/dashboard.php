@@ -142,7 +142,16 @@ require("../configuration/config.php");
                             </div>
                             <div id="divventa">
                                 <div class="card-body">
-                                    <div class="form-row">
+                                    <div class="form-row mb-2">
+                                        <div class="col-md-11">
+                                            <input class="form-control" type="text" name="codigo" id="codigo" placeholder="Codigo del producto">
+                                        </div>
+                                        <div class="col-md-1">
+                                            <button class="btn btn-primary pull-right" onclick="buscarArt()">Buscar</button>
+                                        </div>
+                                    </div>
+                                    <h5>Articulos para buscar</h5>
+                                    <div class="form-row mt-2">
                                         <div class="col-md-6 mb-6">
                                             <label for="validationCustom01">Articulo:</label>
                                             <br>
@@ -153,7 +162,7 @@ require("../configuration/config.php");
                                         </div>
                                         <div class="col-md-2 mb-2">
                                             <label for="validationCustom01">Cantidad:</label>
-                                            <input min="1" type="number" class="form-control" id="cantidad" name="cantidad" placeholder="Cantidad" required="">
+                                            <input min="1" type="number" class="form-control" id="cantidad" name="cantidad" placeholder="Cantidad" value="1" required="">
                                         </div>
                                         <div class="col-md-3 mb-3">
                                             <label for="validationCustom01">Venta:</label>
@@ -344,6 +353,7 @@ require("../configuration/config.php");
 <!-- others plugins -->
 <script src="../../assets/js/plugins.js"></script>
 <script src="../../assets/js/scripts.js"></script>
+<script src="../../assets/js/qs.js"></script>
 <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/jquery.validate.min.js"></script>
 <script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.10.0/localization/messages_es.js"></script>
@@ -352,6 +362,44 @@ require("../configuration/config.php");
     var elementos = new Array();
     var elementos_visuales = new Array();
     var contador = 0;
+    //PRESIONAR ENTER EN EL BUSCADOR
+    $('#codigo').keypress(function (e) {
+        var key = e.which;
+        if(key == 13)  // the enter key code
+        {
+            if ($('#codigo').val()!="") {
+                buscarArt()
+            }
+        }
+    }); 
+    function buscarArt() {
+        axios.post('../request/buscarArticulo.php', Qs.stringify({'codigo':$('#codigo').val()}))
+        .then(
+            resp => {
+                let texto;
+                if(resp.data.status){
+                    let articuloBuscado = resp.data.message;
+                    texto = `
+                        Articulo: ${articuloBuscado.nombre} 
+                        <br>Precio: $${articuloBuscado.costo_venta}
+                        <br>Tipo de compra: <select id="tipocobroModal" class="form-control"><option>Normal</option><option>Mayoreo</option></select>
+                        <br>Cantidad: <input min="1" value="1" type="number" class="form-control" id="cantidadModal" placeholder="Cantidad" required="">
+                        <input id="articuloModal" value="${articuloBuscado.id}" type="number" hidden>
+                    `;
+                    alertHTML(((resp.data.status)?'RESULTADO':'ERROR'),`${texto}`,((resp.data.status)?'success':'error'))
+                }else{
+                    texto = resp.data.message;
+                    alert(((resp.data.status)?'RESULTADO':'ERROR'),`${texto}`,((resp.data.status)?'success':'error'))
+                }
+                
+                $('#codigo').val('')
+            }
+        ).catch(error => {
+            if (error.response.status === 422) {
+                console.log(error);
+            }
+        })
+    }
     function ingresoEfect() {
         if ($("#efectivoForm").valid()) {
             axios.post('../request/agregar_ingreso.php', $('#efectivoForm').serialize())
@@ -376,6 +424,31 @@ require("../configuration/config.php");
             icon: tipo,
             title: title,
             text: text,
+        })
+    }
+    function alertHTML(title,text,tipo) {
+        Swal.fire({
+            icon: tipo,
+            title: title,
+            html: text,
+            showCancelButton: true,
+            showConfirmButton: true,
+            confirmButtonText:'Agregar',
+            cancelButtonText:'Cancelar',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $("#articulo").val($("#articuloModal").val());
+                $("#cantidad").val($("#cantidadModal").val());
+                $("#tipocobro").val($("#tipocobroModal").val());
+                $("#agregar").click();
+                $('#articulo').prop('selectedIndex',0)
+                $('#articulo').selectpicker('refresh')
+                $("#cantidad").val('1');
+                $('#tipocobro').prop('selectedIndex',0)
+                $('#tipocobro').selectpicker('refresh')
+
+                Swal.fire('Agregado', '', 'success')
+            }
         })
     }
     $("#agregar").click(function () {
@@ -432,6 +505,11 @@ require("../configuration/config.php");
                     $("#lista").fadeIn(3000);
                     actualizar_elementos(); // se usa nombre por cuestiones de estetica
                     contador++;
+                    $('#articulo').prop('selectedIndex',0)
+                    $('#articulo').selectpicker('refresh')
+                    $("#cantidad").val('1');
+                    $('#tipocobro').prop('selectedIndex',0)
+                    $('#tipocobro').selectpicker('refresh')
                 }
 
             }
@@ -539,7 +617,15 @@ require("../configuration/config.php");
 
         if (total_de_venta <= total_ingreso) {
             var cambio = total_ingreso - total_de_venta;
-            alert("El cambio es de: $" + cambio);
+            Swal.fire({
+                icon: 'info',
+                title: 'Cambio',
+                text: "El cambio es de: $"+ cambio,
+                showConfirmButton: true,
+                confirmButtonText:'Cambio devuelto',
+            }).then((result) => {
+                location.reload();
+            })
 
             $.ajax({
                 type: "POST",
@@ -552,7 +638,7 @@ require("../configuration/config.php");
                 }, //capturo array     
                 success: function (data) {
                     if (data != "error") {
-                        ticket(data);
+                        ticket(data,cambio);
 
                     } else {
                         alert(data);
@@ -567,10 +653,9 @@ require("../configuration/config.php");
 
     });
 
-    function ticket(id) {
-        url = "ticket.php?ticket=" + id;
+    function ticket(id,cambio) {
+        url = "ticket.php?ticket=" + id+"&cambio="+cambio;
         window.open(url, '_blank', 'width=600,height=650');
-        location.reload();
         return false;
 
     }
