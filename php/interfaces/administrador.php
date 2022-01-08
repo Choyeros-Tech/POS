@@ -234,31 +234,34 @@ require("../obtain/graficas.php");
                     <div class="card">
                         <div class="card-body">
                             <div class="breadcrumbs-area clearfix">
-                                <h4 class="page-title pull-left">Corte del día</h4>
+                                <h4 class="page-title pull-left">Generar corte</h4>
                             </div>
                             <div class="form-row">
                                     <div class="col-md-11 mb-11">
-                                        <form action="../request/generar_corte.php" method="POST" target="_blank">
+                                        <form  method="POST" target="_blank">
                                             <div class="row">
-                                                <div class="col-lg-6">
+                                                <div class="col-lg-3">
                                                     <label for="validationCustom01">Tipo de corte:</label>
-                                                    <select name="tipo" class="form-control" id="" onchange="checkOption(this)">
-                                                        <option value="1">Empleado</option>
+                                                    <select name="tipo" class="form-control" id="tipoCorte" onchange="checkOption(this)">
+                                                        <option value="1">Turno</option>
                                                         <option value="2">Del Dia</option>
                                                     </select>
+                                                    
                                                 </div>
-                                                <div class="col-lg-6" id="divUser">
+                                                <div class="col-lg-3 d-flex align-items-end">
+                                                    <button type="button" onclick="getCorte()" class="btn btn-primary">Generar</button>
+                                                </div>
+
+                                                <!-- <div class="col-lg-3" id="divUser">
                                                     <label for="validationCustom01">Empleado:</label>
                                                     <select name="empleado" id="empleado" class="form-control">
                                                         <option selected disabled>Seleccione</option>
-                                                        <?php require("../obtain/empleados.php");?>
+                                                        <?php //require("../obtain/empleados.php");?>
                                                     </select>
-                                                </div>
+                                                </div> -->
                                             </div>
                                     </div>
                                     <div class="col-md-1 mb-1">
-                                        <label for="validationCustom01">.</label><br>
-                                        <input type="submit" class="btn btn-primary" value="Generar">
                                     </div>
                                     </form>
                                 </div>
@@ -391,8 +394,6 @@ require("../obtain/graficas.php");
             $('#divUser').show();
             $('#empleado').attr('hidden');
         }
-        
-        
     }
     function addUser() {
         // $("#egreEfect").valid();
@@ -414,6 +415,19 @@ require("../obtain/graficas.php");
         }
         
     };
+    function getCorte() {
+        // action="../request/generar_corte.php"     IMPRIMIR CORTE Y GENERAR
+        axios.post('../request/getCorte.php', 'option='+$('#tipoCorte option:selected').text())
+        .then(
+            resp => {
+
+            }
+        ).catch(error => {
+            if (error.response.status === 422) {
+                console.log(error);
+            }
+        })
+    }
 </script>
 
 <?php

@@ -6,6 +6,9 @@ require("../configuration/config.php");
 $cliente = $_POST['cliente'];
 $mpago = $_POST['mpago'];
 $referencia = $_POST['referencia'];
+$cambio = $_POST['cambio'];
+$efectivo = $_POST['efectivo'];
+$tarjeta = $_POST['tarjeta'];
 
 $data = json_decode($_POST['array']);
 
@@ -17,7 +20,28 @@ $consecutivo=$row["id_venta"]+1;
 $fecha = date("Y-m-d");
 $hora = date("H:i:s");
 
+switch ($mpago) {
+	case 'Tarjeta':
+		$queryIngresoTarjeta = "INSERT INTO tarjeta(efectivo, concepto, fecha, hora, eos, usuario, id_venta) VALUES ('".$_POST['pago']."', 'Venta', '$fecha', '$hora', 'entrada', '".$_SESSION['nombre']."', '$consecutivo')";
+		$res = mysqli_query($mysqli, $queryIngresoTarjeta);
 
+		break;
+	case 'Efectivo':
+		$queryIngresoEfect = "INSERT INTO efectivo(efectivo, concepto, fecha, hora, eos, usuario, id_venta) VALUES ('".$_POST['pago']."', 'Venta', '$fecha', '$hora', 'entrada', '".$_SESSION['nombre']."', '$consecutivo')";
+		$res = mysqli_query($mysqli, $queryIngresoEfect);
+
+		break;
+	case 'Mixto':
+		$queryIngresoEfect = "INSERT INTO efectivo(efectivo, concepto, fecha, hora, eos, usuario, id_venta) VALUES ('".$_POST['efectivo']."', 'Venta', '$fecha', '$hora', 'entrada', '".$_SESSION['nombre']."', '$consecutivo')";
+		$queryIngresoTarjeta = "INSERT INTO tarjeta(efectivo, concepto, fecha, hora, eos, usuario, id_venta) VALUES ('".$_POST['tarjeta']."', 'Venta', '$fecha', '$hora', 'entrada', '".$_SESSION['nombre']."', '$consecutivo')";
+		$resTar = mysqli_query($mysqli, $queryIngresoTarjeta);
+		$resEfec = mysqli_query($mysqli, $queryIngresoEfect);
+		break;
+}
+if ($_POST['cambio']>0) {
+	$queryIngresoEfect = "INSERT INTO efectivo(efectivo, concepto, fecha, hora, eos, usuario, id_venta) VALUES ('".$_POST['cambio']."', 'Venta', '$fecha', '$hora', 'salida', '".$_SESSION['nombre']."', '$consecutivo')";
+	$resEfecFeria = mysqli_query($mysqli, $queryIngresoEfect);
+}
 for($i=0; $i< sizeof($data); $i++)
 {
 	$articulo = $data[$i]->articulo;
@@ -28,6 +52,7 @@ for($i=0; $i< sizeof($data); $i++)
 	$contador_errores = 0;
 
 	$query_cotizacion = "INSERT INTO ventas(id_venta, articulo, cantidad, precio, fecha, hora, empleado, cliente, tipo_pago, referencia) VALUES ('$consecutivo', '$articulo', '$cantidad', '$precio', '$fecha', '$hora', '$Nombre', '$cliente', '$mpago', '$referencia')";
+	
 	$res = mysqli_query($mysqli, $query_cotizacion);
 	if($res)
 	{
@@ -63,5 +88,6 @@ for($i=0; $i< sizeof($data); $i++)
 	}
 	
 }
+
 
 ?>

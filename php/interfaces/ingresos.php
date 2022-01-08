@@ -174,7 +174,6 @@ require("../configuration/config.php");
                         <div class="col-md-6 mb-6">
                             <label for="validationCustom01">Tipo Ingreso:</label>
                             <select name="tipo" id="tipo" class="form-control" required>
-                                <option>Fondo de Caja</option>
                                 <option>Recibo de Dinero</option>
                                 <option>Otro</option>
                             </select>

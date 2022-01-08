@@ -302,6 +302,8 @@ require("../configuration/config.php");
                     </div>
                     <div class="row" id="divtarjeta" style="display: none;">
                         <div class="col-md-12 mb-12">
+                            <label for="validationCustom01">Cantidad:</label>
+                            <input type="number" name="tarjeta" id="tarjeta" class="form-control">
                             <label for="validationCustom01">Referencia:</label>
                             <input type="text" name="referencia" id="referencia" class="form-control">
                             <small>En pagos con tarjeta se ingresa la cantidad exacta y añada la referencia</small>
@@ -586,6 +588,7 @@ require("../configuration/config.php");
 
         var mpago = $("#mpago").val();
         var dinero = $("#dinero").val();
+        var tarjeta = $("#tarjeta").val();
         var referencia = $("#referencia").val();
         var cefectivo = $("#cefectivo").val();
         var ctarjeta = $("#ctarjeta").val();
@@ -595,7 +598,7 @@ require("../configuration/config.php");
             alert('Oops...','Seleccione Un artículo','error')
             return true;
         }
-        if (parseInt(dinero) < 1 || parseInt(cefectivo) < 1 || parseInt(ctarjeta) < 1) {
+        if (parseInt(dinero) < 1 || parseInt(tarjeta) < 1 || parseInt(cefectivo) < 1 || parseInt(ctarjeta) < 1) {
             alert('Oops...','Cantidad no puede ser menos de 1','error')
             return true;
         }
@@ -607,7 +610,7 @@ require("../configuration/config.php");
             total_ingreso = parseInt(dinero);
         } else if (mpago == "Tarjeta") {
             total_ingreso = 0;
-            total_ingreso = parseInt(total_de_venta);
+            total_ingreso = parseInt(tarjeta);
         } else {
             total_ingreso = 0;
             total_ingreso = parseInt(cefectivo) + parseInt(ctarjeta);
@@ -634,7 +637,11 @@ require("../configuration/config.php");
                     'array': JSON.stringify(elementos),
                     'cliente': cliente,
                     'mpago': mpago,
-                    'referencia': referencia
+                    'referencia': referencia,
+                    'cambio': cambio,
+                    'efectivo':(parseInt(cefectivo))?parseInt(cefectivo):0,
+                    'tarjeta':(parseInt(ctarjeta))?parseInt(ctarjeta):0,
+                    'pago':(parseInt(total_ingreso))?parseInt(total_ingreso):0
                 }, //capturo array     
                 success: function (data) {
                     if (data != "error") {
