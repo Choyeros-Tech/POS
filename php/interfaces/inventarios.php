@@ -337,33 +337,56 @@ require("../configuration/config.php");
                                                     <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Nombre del Artículo" required>
                                                 </div>
                                                 <div class="col-md-2 mb-2">
-                                                    <label for="validationCustom01">Codigo:</label>
+                                                    <label for="validationCustom01">Código:</label>
                                                     <input maxlength="45" type="text" name="codigo" id="codigo" class="form-control" required>
                                                 </div>
                                             </div>
                                             <br>
                                             <div class="form-row align-items-baseline">
-                                                <div class="col-md-2 mb-3">
+                                                <div class="col-md-3 mb-3">
                                                     <label for="validationCustom01">Cantidad de producto:</label>
                                                     <input min="1" type="number" class="form-control" id="cantidad" name="cantidad" placeholder="Cantidad del producto" required>
                                                 </div>
-                                                <div class="col-md-2 mb-3">
-                                                    <label for="validationCustom01">Costo Venta:</label>
-                                                    <input min=".1" type="number" step=".01" class="form-control" id="venta" name="venta" placeholder="Costo de Venta" required>
+                                                <div class="col-md-3 mb-3">
+                                                    <label for="unidad_medida">Unidad de medida:</label>
+                                                    <select class="custom-select" id="unidad_medida" name="unidad_medida" required>
+                                                        <option value="ud">Unidad/Pza</option>
+                                                        <option value="grnl">Granel</option>
+                                                    </select>
                                                 </div>
-                                                <div class="col-md-2 mb-3">
-                                                    <label for="validationCustom01">Costo Compra:</label>
-                                                    <input min=".1" type="number" step=".01" class="form-control" id="compra" name="compra" placeholder="Costo de Compra" required>
+                                                <div class="col-md-3 mb-3">
+                                                    <label for="validationCustom01">Costo de compra:</label>
+                                                    <input min=".1" type="number" step=".01" class="form-control" id="compra" name="compra" placeholder="Costo de Compra" onkeyup="checkGanancia(this)" required>
                                                 </div>
-                                                <div class="col-md-2 mb-3">
-                                                    <label for="validationCustom01">Costo Mayoreo:</label>
+                                                <div class="col-md-3 mb-3">
+                                                    <label for="validationCustom01">Ganancia (%):</label>
+                                                    <input min=".1" type="number" step=".01" class="form-control" id="ganancia" name="ganancia" placeholder="Ganacia" value="0" required onkeyup="checkGanancia(this)">
+                                                </div>
+                                            </div>
+                                            <div class="form-row align-items-baseline">
+                                                <div class="col-md-4 mb-3">
+                                                    <label for="validationCustom01">Costo de venta:</label>
+                                                    <input min=".1" type="number" step=".01" class="form-control" id="venta" name="venta" placeholder="Costo de Venta" onkeyup="checkGanancia(this)" required>
+                                                </div>
+                                                <div class="col-md-4 mb-3">
+                                                    <label for="validationCustom01">Costo de mayoreo:</label>
                                                     <input min=".1" type="number" step=".01" class="form-control" id="mayoreo" name="mayoreo" placeholder="Costo de Mayoreo" required>
                                                 </div>
                                                 <div class="col-md-4 mb-3">
-                                                    <label for="validationCustom01">Marca:</label>
+                                                    <label for="validationCustom01">Grupo:</label>
                                                     <select class="custom-select" id="marca" name="marca" required>
                                                         <?php require("../obtain/option_marcas.php"); ?>
                                                     </select>
+                                                </div>
+                                            </div>
+                                            <div class="form-row align-items-center">
+                                                <div class="col-md-6 mb-2">
+                                                    <label for="not_min_check">Notificar cantidad baja:</label>
+                                                    <input type="checkbox" name="not_min_check" id="not_min_check" class="form-control d-inline" style="width: auto;" required>
+                                                </div>
+                                                <div class="col-md-6 mb-2">
+                                                    <label for="cant_min">Cantidad minima</label>
+                                                    <input maxlength="5" type="number" name="cant_min" id="cant_min" class="form-control d-inline" required>
                                                 </div>
                                             </div>
                                             <br>
@@ -457,6 +480,17 @@ require("../configuration/config.php");
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.24.0/axios.min.js" integrity="sha512-u9akINsQsAkG9xjc1cnGF4zw5TFDwkxuc9vUp5dltDWYCSmyd0meygbvgXrlc/z7/o4a19Fb5V0OUE58J7dcyw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     
     <script type="text/javascript">
+        function checkGanancia(nod) {
+            switch (nod.id) {
+                case 'compra':
+                case 'ganancia':
+                    $("#venta").val(Number($("#compra").val()) + (Number($("#compra").val())*Number($("#ganancia").val())/100));
+                    break;
+                case 'venta':
+                    $("#ganancia").val((Number($("#venta").val())*100/Number($("#compra").val()))-100);
+                    break;
+            }
+        }
         $( document ).ready(function() {
             articulos = $('#tablaarticulos').DataTable({
                 responsive: true,
@@ -540,13 +574,17 @@ require("../configuration/config.php");
             axios.post('../request/get_articulo.php', 'id='+params)
             .then(
                 resp => {
-                    $("#nombre").val(resp.data.message.nombre)
+                    $("#nombre").val(resp.data.message.nomArt)
                     $("#codigo").val(resp.data.message.codigo)
                     $("#cantidad").val(resp.data.message.cantidad)
+                    $("#unidad_medida").val(resp.data.message.unidad_medida)
                     $("#venta").val(resp.data.message.costo_venta)
                     $("#compra").val(resp.data.message.costo_compra)
                     $("#mayoreo").val(resp.data.message.costo_mayoreo)
                     $("#marca").val(resp.data.message.marca)
+                    $("#ganancia").val(resp.data.message.ganancia)
+                    $('#not_min_check').prop('checked', ((resp.data.message.not_min_check=='on')?true:false));
+                    $("#cant_min").val(resp.data.message.cant_min)
                     
                 }
             ).catch(error => {

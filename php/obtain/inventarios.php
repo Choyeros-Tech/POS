@@ -1,7 +1,7 @@
 <?php
 error_reporting(0);
 require("../connections/connection.php");
-$consulta = "SELECT a.nombre, a.codigo, i.cantidad, a.costo_venta, a.costo_mayoreo, a.costo_compra, m.nombre, a.id FROM articulos a INNER JOIN inventario i ON a.id = i.id INNER JOIN marcas m ON a.marca = m.id";
+$consulta = "SELECT a.nombre, a.codigo, i.cantidad, a.costo_venta, a.costo_mayoreo, a.costo_compra, m.nombre, a.id FROM articulos a INNER JOIN inventario i ON a.id = i.articulo INNER JOIN marcas m ON a.marca = m.id";
 $ejecutar = mysqli_query($mysqli, $consulta);
 if($ejecutar)
 {

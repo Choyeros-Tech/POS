@@ -8,9 +8,13 @@ $mayoreo = $_POST['mayoreo'];
 $marca = $_POST['marca'];
 $cantidad = $_POST['cantidad'];
 $codigo = $_POST['codigo'];
+$unidad_medida = $_POST['unidad_medida'];
+$ganancia = $_POST['ganancia'];
+$not_min_check = $_POST['not_min_check'];
+$cant_min = $_POST['cant_min'];
 
 
-$registrar = "INSERT INTO articulos(nombre, costo_venta, costo_mayoreo, costo_compra, marca, codigo) VALUES ('$nombre', '$venta', '$mayoreo', '$compra', '$marca','$codigo')";
+$registrar = "INSERT INTO articulos(nombre, costo_venta, costo_mayoreo, costo_compra, marca, codigo, unidad_medida,ganancia,not_min_check,cant_min) VALUES ('$nombre', '$venta', '$mayoreo', '$compra', '$marca','$codigo','$unidad_medida','$ganancia','$not_min_check','$cant_min')";
 $ejecutar = mysqli_query($mysqli, $registrar);
 
 if($ejecutar)
