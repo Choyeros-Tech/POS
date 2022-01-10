@@ -579,7 +579,11 @@ require("../configuration/config.php");
 
 
     $("#finalizar").click(function () {
-        $('#modalpago').modal('show');
+        if (elementos.length>0) {
+            $('#modalpago').modal('show');
+        }else{
+            alert('Oops...','No tienes nada registrado','error')
+        }
     });
 
     $("#terminarventa").click(function () {
