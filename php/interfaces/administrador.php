@@ -340,9 +340,7 @@ require("../obtain/graficas.php");
                                     </div>
                                     <div class="row mt-3 d-flex justify-content-end">
                                         <button class="btn btn-secondary">Imprimir</button>
-                                        <form action="../request/cerrarCorte.php">
-                                            <button class="btn btn-danger ml-1">Cerrar turno</button>
-                                        </form>
+                                        <button class="btn btn-danger ml-1" type="button" onclick="modalCant()">Hacer corte</button>
                                     </div>
                                 </div>
                             </div>
@@ -437,6 +435,33 @@ require("../obtain/graficas.php");
 
     </div>
 </div>
+<div id="modalCantCaja" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header" style="float: right;">
+                <h4 class="modal-title">Cantidad en caja</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+
+            </div>
+            <div class="modal-body">
+                <form action="../request/cerrarCorte.php" onsubmit="return confirmCorte();" method="post" id="formCerrarCorte">
+                    <div class="form-row">
+                    <div class="col-md-12 mb-12">
+                            <label for="validationCustom01">Cantidad:</label>
+                            <input type="number" class="form-control" name="cantidad_caja" id="cantidad_caja" required>
+                            <input type="number" name="cantidad_total" id="cantidad_total" hidden>
+                        </div>
+                    </div>
+                    <br>
+                    <button class="btn btn-primary pull-right" type="submit">Registrar</button>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
 
 <script src="../../assets/js/vendor/jquery-2.2.4.min.js"></script>
 <script src="../../assets/js/popper.min.js"></script>
@@ -460,6 +485,9 @@ require("../obtain/graficas.php");
 
 
 <script>
+    function modalCant() {
+        $("#modalCantCaja").modal('show')
+    }
     function alert(title,text,tipo) {
         Swal.fire({
             icon: tipo,
@@ -502,6 +530,7 @@ require("../obtain/graficas.php");
         .then(
             resp => {
                 $('#totalDineroCaja').text((resp.data.message.fondoInicial+resp.data.message.ventasEfectivo+resp.data.message.entradasEfectivo)-resp.data.message.salidaEfectivo)
+                $('#cantidad_total').val((resp.data.message.fondoInicial+resp.data.message.ventasEfectivo+resp.data.message.entradasEfectivo)-resp.data.message.salidaEfectivo)
                 $('#colorDineroCaja').css('color',((((resp.data.message.fondoInicial+resp.data.message.ventasEfectivo+resp.data.message.entradasEfectivo)-resp.data.message.salidaEfectivo)>=0)?'green':'red'))
                 $('#fondoInicial').text(resp.data.message.fondoInicial)
                 $('#ventasEfectivo').text(resp.data.message.ventasEfectivo)
@@ -516,6 +545,37 @@ require("../obtain/graficas.php");
         ).catch(error => {
             if (error.response.status === 422) {
                 console.log(error);
+            }
+        })
+    }
+    function confirmCorte() {
+        
+        
+        
+    }
+    var form1 = document.getElementById('formCerrarCorte');
+    form1.onsubmit = function(e){
+        var form = this;
+        let text
+        if($("#cantidad_caja").val()<$("#cantidad_total").val()){
+           text = '¿Estats seguro de hacer el corte? Con una cantidad faltante de: '+ ($("#cantidad_caja").val() - $("#cantidad_total").val())
+        }else{
+            text = '¿Estas seguro de hacer el corte?'
+        }
+        e.preventDefault();
+        Swal.fire({
+            icon: 'info',
+            title: 'Confirmación',
+            text: text,
+            showCancelButton: true,
+            showConfirmButton: true,
+            cancelButtonText:'Cancelar',
+            confirmButtonText:'Confirmar',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                form.submit();
+            }else{
+                return false;
             }
         })
     }
