@@ -22,10 +22,13 @@ require("../obtain/graficas.php");
     <link rel="stylesheet" href="../../assets/css/responsive.css">
     <link rel="stylesheet" href="../../assets/css/bootstrap-select.css">
     <link rel="stylesheet" href="../../assets/css/sweetalert2.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="../../assets/js/vendor/modernizr-2.8.3.min.js"></script>
     <style>
-    label.error { float: none; color: red; padding-left: .5em; vertical-align: middle; font-size: 12px; }
-</style>
+        label.error { float: none; color: red; padding-left: .5em; vertical-align: middle; font-size: 12px; }
+        .listCaja li { background: lightgray; }
+        .listCaja li:nth-child(odd) { background: white; }
+    </style>
 </head>
 
 <body>
@@ -237,34 +240,112 @@ require("../obtain/graficas.php");
                                 <h4 class="page-title pull-left">Generar corte</h4>
                             </div>
                             <div class="form-row">
-                                    <div class="col-md-11 mb-11">
-                                        <form  method="POST" target="_blank">
-                                            <div class="row">
-                                                <div class="col-lg-3">
-                                                    <label for="validationCustom01">Tipo de corte:</label>
-                                                    <select name="tipo" class="form-control" id="tipoCorte" onchange="checkOption(this)">
-                                                        <option value="1">Turno</option>
-                                                        <option value="2">Del Dia</option>
-                                                    </select>
-                                                    
-                                                </div>
-                                                <div class="col-lg-3 d-flex align-items-end">
-                                                    <button type="button" onclick="getCorte()" class="btn btn-primary">Generar</button>
-                                                </div>
-
-                                                <!-- <div class="col-lg-3" id="divUser">
-                                                    <label for="validationCustom01">Empleado:</label>
-                                                    <select name="empleado" id="empleado" class="form-control">
-                                                        <option selected disabled>Seleccione</option>
-                                                        <?php //require("../obtain/empleados.php");?>
-                                                    </select>
-                                                </div> -->
+                                <div class="col-md-11 mb-11">
+                                    <form  method="POST" target="_blank">
+                                        <div class="row">
+                                            <div class="col-lg-3">
+                                                <label for="validationCustom01">Tipo de corte:</label>
+                                                <select name="tipo" class="form-control" id="tipoCorte" onchange="checkOption(this)">
+                                                    <option value="1">Turno</option>
+                                                    <option value="2">Del Dia</option>
+                                                </select>
+                                                
                                             </div>
-                                    </div>
-                                    <div class="col-md-1 mb-1">
-                                    </div>
+                                            <div class="col-lg-3 d-flex align-items-end">
+                                                <button type="button" onclick="getCorte()" class="btn btn-primary">Generar</button>
+                                            </div>
+
+                                            <!-- <div class="col-lg-3" id="divUser">
+                                                <label for="validationCustom01">Empleado:</label>
+                                                <select name="empleado" id="empleado" class="form-control">
+                                                    <option selected disabled>Seleccione</option>
+                                                    <?php //require("../obtain/empleados.php");?>
+                                                </select>
+                                            </div> -->
+                                        </div>
                                     </form>
                                 </div>
+                            </div>
+                            <div class="form-row mt-4">
+                                <div class="col-md-11 mb-11">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <h5><i class="fa-duotone fa-dollar-sign"></i>Ventas totales: $<span id="ventasTotatles">0</span></h5>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <h5><i class="fa-solid fa-chart-column"></i>Ganancias: $<span id="ganancias">0</span></h5>
+                                        </div>
+                                    </div>
+                                    <div class="row mt-3">
+                                        <div class="col-md-6">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <h5><i class="fa-solid fa-cash-register"></i>Dinero en caja</h5>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-12 listCaja">
+                                                    <ul>
+                                                        <li class="d-flex justify-content-between">
+                                                            <div class="d-inline">Fondo de caja inicial</div>
+                                                            <div class="d-inline" style="color:green;">+ $<span id="fondoInicial">0</span> </div>
+                                                        </li>
+                                                        <li class="d-flex justify-content-between">
+                                                            <div class="d-inline">Efectivo recibido por ventas</div>
+                                                            <div class="d-inline" style="color:green;">+ $<span id="ventasEfectivo">0</span> </div>
+                                                        </li>
+                                                        <li class="d-flex justify-content-between">
+                                                            <div class="d-inline">Entradas</div>
+                                                            <div class="d-inline" style="color:green;">+ $<span id="entradasEfectivo">0</span> </div>
+                                                        </li>
+                                                        <li class="d-flex justify-content-between">
+                                                            <div class="d-inline">Salidas</div>
+                                                            <div class="d-inline" style="color:red;">- $<span id="salidaEfectivo">0</span> </div>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                            <div class="row mt-1">
+                                                <div class="col-md-12 d-flex justify-content-between">
+                                                    <div class="d-inline"></div>
+                                                    <div id="colorDineroCaja" class="d-inline" style="color: black;min-width: 8%;border-top: 1px solid black;"><div class="d-flex justify-content-end">$<span id="totalDineroCaja">0</span></div></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <h5><i class="fa-solid fa-bag-shopping"></i>Ventas</h5>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-12 listCaja">
+                                                    <ul>
+                                                        <li class="d-flex justify-content-between">
+                                                            <div class="d-inline">En efectivo</div>
+                                                            <div class="d-inline" style="color:green;">+ $<span id="ventasTotalesEfectivo">0</span> </div>
+                                                        </li>
+                                                        <li class="d-flex justify-content-between">
+                                                            <div class="d-inline">Con tarjeta</div>
+                                                            <div class="d-inline" style="color:green;">+ $<span id="ventasTotalesTarjeta">0</span> </div>
+                                                        </li>
+                                                        <li class="d-flex justify-content-between">
+                                                            <div class="d-inline">Mixto</div>
+                                                            <div class="d-inline" style="color:green;">+ $<span id="ventasTotalesMixto">0</span> </div>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mt-3 d-flex justify-content-end">
+                                        <button class="btn btn-secondary">Imprimir</button>
+                                        <form action="../request/cerrarCorte.php">
+                                            <button class="btn btn-danger ml-1">Cerrar turno</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -420,7 +501,17 @@ require("../obtain/graficas.php");
         axios.post('../request/getCorte.php', 'option='+$('#tipoCorte option:selected').text())
         .then(
             resp => {
-
+                $('#totalDineroCaja').text((resp.data.message.fondoInicial+resp.data.message.ventasEfectivo+resp.data.message.entradasEfectivo)-resp.data.message.salidaEfectivo)
+                $('#colorDineroCaja').css('color',((((resp.data.message.fondoInicial+resp.data.message.ventasEfectivo+resp.data.message.entradasEfectivo)-resp.data.message.salidaEfectivo)>=0)?'green':'red'))
+                $('#fondoInicial').text(resp.data.message.fondoInicial)
+                $('#ventasEfectivo').text(resp.data.message.ventasEfectivo)
+                $('#entradasEfectivo').text(resp.data.message.entradasEfectivo)
+                $('#salidaEfectivo').text(resp.data.message.salidaEfectivo)
+                $('#ventasTotatles').text(resp.data.message.ventasTotatles)
+                $('#ganancias').text(resp.data.message.ganancias)
+                $('#ventasTotalesEfectivo').text(resp.data.message.ventasTotalesEfectivo)
+                $('#ventasTotalesTarjeta').text(resp.data.message.ventasTotalesTarjeta)
+                $('#ventasTotalesMixto').text(resp.data.message.ventasTotalesMixto)
             }
         ).catch(error => {
             if (error.response.status === 422) {

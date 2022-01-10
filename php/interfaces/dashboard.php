@@ -690,7 +690,7 @@ require("../configuration/config.php");
 </script>
 <?php
 $hoy = date("Y-m-d");
-$validar_fondo_caja = "SELECT * FROM efectivo WHERE usuario = '$Nombre' AND fecha = '$hoy' AND concepto = 'Fondo de Caja'";
+$validar_fondo_caja = "SELECT * FROM efectivo WHERE usuario = '$Nombre' AND fecha = '$hoy' AND concepto = 'Fondo de Caja' AND ISNULL(corte)";
 $validar_res = mysqli_query($mysqli, $validar_fondo_caja);
 if($validar_fondo_caja)
 {
