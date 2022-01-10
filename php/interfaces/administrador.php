@@ -339,7 +339,9 @@ require("../obtain/graficas.php");
                                         </div>
                                     </div>
                                     <div class="row mt-3 d-flex justify-content-end">
-                                        <button class="btn btn-secondary">Imprimir</button>
+                                        <form action="../request/generar_corte.php">
+                                            <button class="btn btn-secondary" type="submit">Imprimir</button>
+                                        </form>
                                         <button class="btn btn-danger ml-1" type="button" onclick="modalCant()">Hacer corte</button>
                                     </div>
                                 </div>
@@ -437,7 +439,6 @@ require("../obtain/graficas.php");
 </div>
 <div id="modalCantCaja" class="modal fade" role="dialog">
     <div class="modal-dialog modal-lg">
-
         <!-- Modal content-->
         <div class="modal-content">
             <div class="modal-header" style="float: right;">
@@ -525,7 +526,6 @@ require("../obtain/graficas.php");
         
     };
     function getCorte() {
-        // action="../request/generar_corte.php"     IMPRIMIR CORTE Y GENERAR
         axios.post('../request/getCorte.php', 'option='+$('#tipoCorte option:selected').text())
         .then(
             resp => {
