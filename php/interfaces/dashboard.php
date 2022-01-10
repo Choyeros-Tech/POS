@@ -246,17 +246,17 @@ require("../configuration/config.php");
 
             </div>
             <div class="modal-body">
-                <form class="needs-validation" id="efectivoForm" method="POST">
+                <form id="efectivoForm" action="">
                     <div class="form-row">
                         <div class="col-md-11 mb-11">
                             <label for="validationCustom01">Cantidad:</label>
-                            <input min=".01" type="number" step="0.01" class="form-control" id="cantidad" name="cantidad" placeholder="Cantidad Exacta Que Ingresa a Caja" required="">
+                            <input min=".01" type="number" step="0.01" class="form-control" id="cantidadFondo" name="cantidad" placeholder="Cantidad Exacta Que Ingresa a Caja" required="">
                             <input type="hidden" name="tipo" value="Fondo de Caja">
                             <input type="hidden" name="inicial" value="true">
                         </div>
                         <div class="col-md-1 mb-1">
                             <label for="validationCustom01">.</label>
-                             <button class="btn btn-primary pull-right" type="button" onclick="ingresoEfect()">Registrar</button>
+                            <button class="btn btn-primary pull-right" type="button" onclick="ingresoEfect()">Registrar</button>
                         </div>
                     </div>
                    
@@ -365,12 +365,24 @@ require("../configuration/config.php");
     var elementos_visuales = new Array();
     var contador = 0;
     //PRESIONAR ENTER EN EL BUSCADOR
+    $("#efectivoForm").submit(function (e) {
+        e.preventDefault(); // "this" is a reference to the submitted form
+    });
     $('#codigo').keypress(function (e) {
         var key = e.which;
         if(key == 13)  // the enter key code
         {
             if ($('#codigo').val()!="") {
                 buscarArt()
+            }
+        }
+    }); 
+    $('#cantidadFondo').keypress(function (e) {
+        var key = e.which;
+        if(key == 13)  // the enter key code
+        {
+            if ($('#cantidadFondo').val()!="") {
+                ingresoEfect()
             }
         }
     }); 
