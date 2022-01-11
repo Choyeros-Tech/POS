@@ -31,7 +31,7 @@ if ($tipoCort == 'Turno') {
     
         }
     }
-    $fondoCaja = "SELECT efec.efectivo,efec.concepto,efec.eos,efec.corte FROM efectivo efec LEFT JOIN ventas vent on efec.id_venta = vent.id_venta  WHERE efec.fecha = '".date('Y-m-d')."' AND ISNULL(vent.corte)";
+    $fondoCaja = "SELECT efec.efectivo,efec.concepto,efec.eos,efec.corte FROM efectivo efec LEFT JOIN ventas vent on efec.id_venta = vent.id_venta  WHERE efec.fecha = '".date('Y-m-d')."' AND ISNULL(vent.corte) group by efec.id";
     $fondoCajaResp = mysqli_query($mysqli, $fondoCaja);
     if($fondoCajaResp){
         $ventasEfectivo = 0;
@@ -50,7 +50,7 @@ if ($tipoCort == 'Turno') {
             }
         }
     }
-    $ventaTarjeta = "SELECT tarj.efectivo,tarj.concepto,tarj.eos FROM tarjeta tarj LEFT JOIN ventas vent on tarj.id_venta = vent.id_venta  WHERE tarj.fecha = '".date('Y-m-d')."' AND ISNULL(vent.corte)";
+    $ventaTarjeta = "SELECT tarj.efectivo,tarj.concepto,tarj.eos FROM tarjeta tarj LEFT JOIN ventas vent on tarj.id_venta = vent.id_venta  WHERE tarj.fecha = '".date('Y-m-d')."' AND ISNULL(vent.corte) group by tarj.id";
     $ventaTarjetaResp = mysqli_query($mysqli, $ventaTarjeta);
     if($ventaTarjetaResp){
         $ventasTarjeta = 0;
@@ -61,6 +61,64 @@ if ($tipoCort == 'Turno') {
         }
     }
     
+}else{
+    //CORTE DEL DIA
+    $consulta = "SELECT  vent.cantidad, vent.precio, vent.tipo_pago, art.costo_compra FROM ventas vent LEFT JOIN articulos art ON vent.articulo = art.id WHERE fecha = '".date('Y-m-d')."'";
+    $ventas = mysqli_query($mysqli, $consulta);
+    if($ventas){
+        $ventasTotatles = 0;
+        $ventasSinGanancia = 0;
+        $ventasTotalesEfectivo = 0;
+        $ventasTotalesTarjeta = 0;
+        $ventasTotalesMixto = 0;
+        
+        while($venta = mysqli_fetch_assoc($ventas)){
+            $ventasTotatles += $venta['cantidad']*$venta['precio'];
+            $ventasSinGanancia += $venta['cantidad']*$venta['costo_compra'];
+            switch ($venta['tipo_pago']) {
+                case 'Efectivo':
+                    $ventasTotalesEfectivo += $venta['cantidad']*$venta['precio'];
+                    break;
+                case 'Tarjeta':
+                    $ventasTotalesTarjeta += $venta['cantidad']*$venta['precio'];
+                    # code...
+                    break;
+                case 'Mixto':
+                    $ventasTotalesMixto += $venta['cantidad']*$venta['precio'];
+                    break;
+            }
+    
+        }
+    }
+    $fondoCaja = "SELECT efec.efectivo,efec.concepto,efec.eos,efec.corte FROM efectivo efec LEFT JOIN ventas vent on efec.id_venta = vent.id_venta  WHERE efec.fecha = '".date('Y-m-d')."' group by efec.id";
+    $fondoCajaResp = mysqli_query($mysqli, $fondoCaja);
+    if($fondoCajaResp){
+        $ventasEfectivo = 0;
+        while($efectCaja = mysqli_fetch_assoc($fondoCajaResp)){
+            if ($efectCaja['concepto'] == 'Fondo de Caja') {
+                $fondoInicial += $efectCaja['efectivo'];
+            }
+            if ($efectCaja['eos'] == 'entrada' && $efectCaja['concepto'] == 'Venta') {
+                $ventasEfectivo += $efectCaja['efectivo'];
+            }
+            if ($efectCaja['eos'] == 'entrada' && $efectCaja['concepto'] == 'Recibo de Dinero') {
+                $entradasEfectivo += $efectCaja['efectivo'];
+            }
+            if ($efectCaja['eos'] == 'salida') {
+                $salidaEfectivo += $efectCaja['efectivo'];
+            }
+        }
+    }
+    $ventaTarjeta = "SELECT tarj.efectivo,tarj.concepto,tarj.eos FROM tarjeta tarj LEFT JOIN ventas vent on tarj.id_venta = vent.id_venta  WHERE tarj.fecha = '".date('Y-m-d')."' group by tarj.id";
+    $ventaTarjetaResp = mysqli_query($mysqli, $ventaTarjeta);
+    if($ventaTarjetaResp){
+        $ventasTarjeta = 0;
+        while($efectTarjeta = mysqli_fetch_assoc($ventaTarjetaResp)){
+            if ($efectTarjeta['eos'] == 'entrada' && $efectTarjeta['concepto'] == 'Venta') {
+                $ventasTarjeta += $efectTarjeta['efectivo'];
+            }
+        }
+    }
 }
 if($ventas){
     echo json_encode(array('status'=>true,'message'=>[

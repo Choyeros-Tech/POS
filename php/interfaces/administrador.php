@@ -266,7 +266,7 @@ require("../obtain/graficas.php");
                                     </form>
                                 </div>
                             </div>
-                            <div class="form-row mt-4">
+                            <div class="form-row mt-4" id="showCorte" style="display: none;">
                                 <div class="col-md-11 mb-11">
                                     <div class="row">
                                         <div class="col-md-6">
@@ -339,7 +339,8 @@ require("../obtain/graficas.php");
                                         </div>
                                     </div>
                                     <div class="row mt-3 d-flex justify-content-end">
-                                        <form action="../request/generar_corte.php">
+                                        <form action="../request/generar_corte.php" method="post">
+                                            <input type="text" name="tipo" id="tipoImprimir" hidden>
                                             <button class="btn btn-secondary" type="submit">Imprimir</button>
                                         </form>
                                         <button class="btn btn-danger ml-1" type="button" onclick="modalCant()">Hacer corte</button>
@@ -453,6 +454,7 @@ require("../obtain/graficas.php");
                             <label for="validationCustom01">Cantidad:</label>
                             <input type="number" class="form-control" name="cantidad_caja" id="cantidad_caja" required>
                             <input type="number" name="cantidad_total" id="cantidad_total" hidden>
+                            <input type="text" name="tipoCorteSend" id="tipoCorteSend" hidden>
                         </div>
                     </div>
                     <br>
@@ -497,6 +499,7 @@ require("../obtain/graficas.php");
         })
     }
     function checkOption(params) {
+        $("#showCorte").hide()
         if($(params).val() == 2){
             $('#divUser').hide();
             $('#empleado').attr('hidden');
@@ -526,6 +529,9 @@ require("../obtain/graficas.php");
         
     };
     function getCorte() {
+        $("#showCorte").show()
+        $("#tipoImprimir").val($('#tipoCorte option:selected').text())
+        $("#tipoCorteSend").val($('#tipoCorte option:selected').text())
         axios.post('../request/getCorte.php', 'option='+$('#tipoCorte option:selected').text())
         .then(
             resp => {
